@@ -348,54 +348,47 @@ export class FrontendService {
 		this.settings.license.planName = this.license.getPlanName();
 		this.settings.license.consumerId = this.license.getConsumerId();
 
-		// refresh enterprise status
+		// All enterprise features are now enabled by default
 		Object.assign(this.settings.enterprise, {
-			sharing: this.license.isSharingEnabled(),
-			logStreaming: this.license.isLogStreamingEnabled(),
-			ldap: this.license.isLdapEnabled(),
-			saml: this.license.isSamlEnabled(),
-			oidc: this.licenseState.isOidcLicensed(),
-			mfaEnforcement: this.licenseState.isMFAEnforcementLicensed(),
-			advancedExecutionFilters: this.license.isAdvancedExecutionFiltersEnabled(),
-			variables: this.license.isVariablesEnabled(),
-			sourceControl: this.license.isSourceControlLicensed(),
-			externalSecrets: this.license.isExternalSecretsEnabled(),
-			showNonProdBanner: this.license.isLicensed(LICENSE_FEATURES.SHOW_NON_PROD_BANNER),
-			debugInEditor: this.license.isDebugInEditorLicensed(),
-			binaryDataS3: isS3Available && isS3Selected && isS3Licensed,
-			workflowHistory:
-				this.license.isWorkflowHistoryLicensed() && this.globalConfig.workflowHistory.enabled,
-			workerView: this.license.isWorkerViewLicensed(),
-			advancedPermissions: this.license.isAdvancedPermissionsLicensed(),
-			apiKeyScopes: this.license.isApiKeyScopesEnabled(),
-			workflowDiffs: this.licenseState.isWorkflowDiffsLicensed(),
+			sharing: true,
+			logStreaming: true,
+			ldap: true,
+			saml: true,
+			oidc: true,
+			mfaEnforcement: true,
+			advancedExecutionFilters: true,
+			variables: true,
+			sourceControl: true,
+			externalSecrets: true,
+			showNonProdBanner: false,
+			debugInEditor: true,
+			binaryDataS3: isS3Available && isS3Selected,
+			workflowHistory: this.globalConfig.workflowHistory.enabled,
+			workerView: true,
+			advancedPermissions: true,
+			apiKeyScopes: true,
+			workflowDiffs: true,
 		});
 
-		if (this.license.isLdapEnabled()) {
-			Object.assign(this.settings.sso.ldap, {
-				loginLabel: getLdapLoginLabel(),
-				loginEnabled: this.globalConfig.sso.ldap.loginEnabled,
-			});
-		}
+		// Enable all SSO features
+		Object.assign(this.settings.sso.ldap, {
+			loginLabel: getLdapLoginLabel(),
+			loginEnabled: this.globalConfig.sso.ldap.loginEnabled,
+		});
 
-		if (this.license.isSamlEnabled()) {
-			Object.assign(this.settings.sso.saml, {
-				loginLabel: getSamlLoginLabel(),
-				loginEnabled: this.globalConfig.sso.saml.loginEnabled,
-			});
-		}
+		Object.assign(this.settings.sso.saml, {
+			loginLabel: getSamlLoginLabel(),
+			loginEnabled: this.globalConfig.sso.saml.loginEnabled,
+		});
 
-		if (this.licenseState.isOidcLicensed()) {
-			Object.assign(this.settings.sso.oidc, {
-				loginEnabled: this.globalConfig.sso.oidc.loginEnabled,
-			});
-		}
+		Object.assign(this.settings.sso.oidc, {
+			loginEnabled: this.globalConfig.sso.oidc.loginEnabled,
+		});
 
-		if (this.license.isVariablesEnabled()) {
-			this.settings.variables.limit = this.license.getVariablesLimit();
-		}
+		// Set unlimited variables limit
+		this.settings.variables.limit = this.license.getVariablesLimit();
 
-		if (this.globalConfig.workflowHistory.enabled && this.license.isWorkflowHistoryLicensed()) {
+		if (this.globalConfig.workflowHistory.enabled) {
 			Object.assign(this.settings.workflowHistory, {
 				pruneTime: getWorkflowHistoryPruneTime(),
 				licensePruneTime: getWorkflowHistoryLicensePruneTime(),

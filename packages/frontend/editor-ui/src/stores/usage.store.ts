@@ -13,23 +13,23 @@ export type UsageTelemetry = {
 	quota: number;
 };
 
-const DEFAULT_PLAN_NAME = 'Community';
+const DEFAULT_PLAN_NAME = 'Enterprise';
 const DEFAULT_STATE: UsageState = {
-	loading: true,
+	loading: false, // No loading since subscription is disabled
 	data: {
 		usage: {
 			activeWorkflowTriggers: {
-				limit: -1,
+				limit: -1, // Unlimited
 				value: 0,
 				warningThreshold: 0.8,
 			},
 			workflowsHavingEvaluations: {
 				value: 0,
-				limit: 0,
+				limit: -1, // Unlimited
 			},
 		},
 		license: {
-			planId: '',
+			planId: 'enterprise-free',
 			planName: DEFAULT_PLAN_NAME,
 		},
 	},
@@ -75,32 +75,28 @@ export const useUsageStore = defineStore('usage', () => {
 	};
 
 	const getLicenseInfo = async () => {
-		const data = await usageApi.getLicense(rootStore.restApiContext);
-		setData(data);
+		// No-op since subscription is disabled - use default state
+		setData(DEFAULT_STATE.data);
 	};
 
 	const activateLicense = async (activationKey: string) => {
-		const data = await usageApi.activateLicenseKey(rootStore.restApiContext, { activationKey });
-		setData(data);
-		await settingsStore.getSettings();
-		await settingsStore.getModuleSettings();
+		// No-op since subscription is disabled
+		console.log('License activation disabled - all features are free');
 	};
 
 	const refreshLicenseManagementToken = async () => {
-		try {
-			const data = await usageApi.renewLicense(rootStore.restApiContext);
-			setData(data);
-		} catch (error) {
-			await getLicenseInfo();
-		}
+		// No-op since subscription is disabled
 	};
 
 	const requestEnterpriseLicenseTrial = async () => {
-		await usageApi.requestLicenseTrial(rootStore.restApiContext);
+		// No-op since subscription is disabled
+		console.log('License trials disabled - all features are free');
 	};
 
-	const registerCommunityEdition = async (email: string) =>
-		await usageApi.registerCommunityEdition(rootStore.restApiContext, { email });
+	const registerCommunityEdition = async (email: string) => {
+		// No-op since subscription is disabled
+		console.log('Community edition registration disabled - all features are free');
+	};
 
 	return {
 		setLoading,

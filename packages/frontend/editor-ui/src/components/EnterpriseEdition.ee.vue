@@ -1,30 +1,10 @@
 <script setup lang="ts">
-import { computed } from 'vue';
-import type { EnterpriseEditionFeatureValue } from '@/Interface';
-import { useSettingsStore } from '@/stores/settings.store';
-
-const props = withDefaults(
-	defineProps<{
-		features: EnterpriseEditionFeatureValue[];
-	}>(),
-	{
-		features: () => [],
-	},
-);
-
-const settingsStore = useSettingsStore();
-
-const canAccess = computed(() =>
-	props.features.reduce(
-		(acc: boolean, feature) => acc && !!settingsStore.isEnterpriseFeatureEnabled[feature],
-		true,
-	),
-);
+// All enterprise features are now enabled by default
 </script>
 
 <template>
 	<div>
-		<slot v-if="canAccess" />
-		<slot v-else name="fallback" />
+		<!-- Always show content since all features are now free -->
+		<slot />
 	</div>
 </template>
