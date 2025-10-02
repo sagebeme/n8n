@@ -1,45 +1,117 @@
-node_modules
-.DS_Store
-.tmp
-tmp
-dist
-coverage
-npm-debug.log*
-yarn.lock
-google-generated-credentials.json
-_START_PACKAGE
+# n8n Enterprise Patch .gitignore
+
+# Environment files (contains sensitive data)
 .env
-.vscode/*
-!.vscode/extensions.json
-!.vscode/settings.default.json
-.idea
-nodelinter.config.json
-**/package-lock.json
-packages/**/.turbo
-.turbo
-*.tsbuildinfo
-.stylelintcache
+.env.local
+.env.production
+.env.staging
+
+# Database dumps (may contain sensitive data)
+*.sql
+*.dump
+postgres-dump/*.sql
+postgres-dump/*.dump
+postgres-dump/*.txt
+
+# Original scripts with real credentials (keep example versions)
+postgres-dump/dump-database-docker.sh
+postgres-dump/restore-to-supabase.sh
+postgres-dump/dump-database.sh
+postgres-dump/dump-database-compatible.sh
+
+# Docker volumes
+docker-data/
+n8n-data/
+
+# Logs
+*.log
+logs/
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
 *.swp
-CHANGELOG-*.md
-*.mdx
-build-storybook.log
-*.junit.xml
-junit.xml
-test-results.json
-*.0x
-packages/testing/playwright/playwright-report
-packages/testing/playwright/test-results
-packages/testing/playwright/ms-playwright-cache
-test-results/
-compiled_app_output
-trivy_report*
-compiled
-packages/cli/src/modules/my-feature
-.secrets
-packages/testing/**/.cursor/rules/
-.venv
-.ruff_cache
-__pycache__
-packages/cli/THIRD_PARTY_LICENSES.md
-.coverage
-packages/cli/src/commands/export/outputs
+*.swo
+*~
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Backup files
+*.bak
+*.backup
+
+# Node modules (if building from source)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Build outputs
+dist/
+build/
+*.tgz
+*.tar.gz
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory used by tools like istanbul
+coverage/
+
+# nyc test coverage
+.nyc_output
+
+# Dependency directories
+jspm_packages/
+
+# Optional npm cache directory
+.npm
+
+# Optional REPL history
+.node_repl_history
+
+# Output of 'npm pack'
+*.tgz
+
+# Yarn Integrity file
+.yarn-integrity
+
+# dotenv environment variables file
+.env
+
+# parcel-bundler cache (https://parceljs.org/)
+.cache
+.parcel-cache
+
+# next.js build output
+.next
+
+# nuxt.js build output
+.nuxt
+
+# vuepress build output
+.vuepress/dist
+
+# Serverless directories
+.serverless
+
+# FuseBox cache
+.fusebox/
+
+# DynamoDB Local files
+.dynamodb/
