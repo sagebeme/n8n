@@ -122,3 +122,5 @@ echo "  User: $SUPABASE_USER"
 echo "  Password: [your password]"
 echo ""
 echo "💡 You can now use these credentials in your n8n environment variables or docker-compose.yml"
+
+

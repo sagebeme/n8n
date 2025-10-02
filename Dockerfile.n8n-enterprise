@@ -1,0 +1,36 @@
+FROM n8nio/n8n:latest
+
+# Switch to root to apply patches
+USER root
+
+# Install sed and grep for verification
+RUN apk add --no-cache sed grep
+
+# Apply the enterprise features patch
+RUN sed -i 's/sharing: this\.license\.isSharingEnabled(),/sharing: true,/g' /usr/local/lib/node_modules/n8n/dist/services/frontend.service.js && \
+    sed -i 's/logStreaming: this\.license\.isLogStreamingEnabled(),/logStreaming: true,/g' /usr/local/lib/node_modules/n8n/dist/services/frontend.service.js && \
+    sed -i 's/ldap: this\.license\.isLdapEnabled(),/ldap: true,/g' /usr/local/lib/node_modules/n8n/dist/services/frontend.service.js && \
+    sed -i 's/saml: this\.license\.isSamlEnabled(),/saml: true,/g' /usr/local/lib/node_modules/n8n/dist/services/frontend.service.js && \
+    sed -i 's/oidc: this\.licenseState\.isOidcLicensed(),/oidc: true,/g' /usr/local/lib/node_modules/n8n/dist/services/frontend.service.js && \
+    sed -i 's/mfaEnforcement: this\.licenseState\.isMFAEnforcementLicensed(),/mfaEnforcement: true,/g' /usr/local/lib/node_modules/n8n/dist/services/frontend.service.js && \
+    sed -i 's/advancedExecutionFilters: this\.license\.isAdvancedExecutionFiltersEnabled(),/advancedExecutionFilters: true,/g' /usr/local/lib/node_modules/n8n/dist/services/frontend.service.js && \
+    sed -i 's/variables: this\.license\.isVariablesEnabled(),/variables: true,/g' /usr/local/lib/node_modules/n8n/dist/services/frontend.service.js && \
+    sed -i 's/sourceControl: this\.license\.isSourceControlLicensed(),/sourceControl: true,/g' /usr/local/lib/node_modules/n8n/dist/services/frontend.service.js && \
+    sed -i 's/externalSecrets: this\.license\.isExternalSecretsEnabled(),/externalSecrets: true,/g' /usr/local/lib/node_modules/n8n/dist/services/frontend.service.js && \
+    sed -i 's/debugInEditor: this\.license\.isDebugInEditorLicensed(),/debugInEditor: true,/g' /usr/local/lib/node_modules/n8n/dist/services/frontend.service.js && \
+    sed -i 's/workerView: this\.license\.isWorkerViewLicensed(),/workerView: true,/g' /usr/local/lib/node_modules/n8n/dist/services/frontend.service.js && \
+    sed -i 's/advancedPermissions: this\.license\.isAdvancedPermissionsLicensed(),/advancedPermissions: true,/g' /usr/local/lib/node_modules/n8n/dist/services/frontend.service.js && \
+    sed -i 's/apiKeyScopes: this\.license\.isApiKeyScopesEnabled(),/apiKeyScopes: true,/g' /usr/local/lib/node_modules/n8n/dist/services/frontend.service.js && \
+    sed -i 's/workflowDiffs: this\.licenseState\.isWorkflowDiffsLicensed(),/workflowDiffs: true,/g' /usr/local/lib/node_modules/n8n/dist/services/frontend.service.js && \
+    sed -i 's/return this\.manager\?\.hasFeatureEnabled(feature) \?\? false;/return true;/g' /usr/local/lib/node_modules/n8n/dist/license.js
+
+# Switch back to node user
+USER node
+
+# Expose port
+EXPOSE 5678
+
+# Keep the original entrypoint and cmd from the base image
+ENTRYPOINT ["docker-entrypoint.sh"]
+CMD ["n8n"]
+

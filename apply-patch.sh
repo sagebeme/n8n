@@ -75,3 +75,5 @@ echo ""
 echo -e "${YELLOW} Access n8n at: http://localhost:5678${NC}"
 echo ""
 echo -e "${YELLOW}  Note: You may see license SDK errors in the logs. These are cosmetic and don't affect functionality.${NC}"
+
+
