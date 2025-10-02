@@ -4,7 +4,17 @@ This guide shows you how to build and deploy the n8n enterprise features unlock 
 
 ## 🐳 Building the Docker Image
 
-### Option 1: Build Locally
+### Option 1: Use Pre-built Image (Recommended)
+
+```bash
+# Pull the pre-built enterprise image
+docker pull sagebeme/n8n-enterprise:latest
+
+# Or use directly in docker-compose
+# (No build step needed)
+```
+
+### Option 2: Build Locally
 
 ```bash
 # Build the enterprise image
@@ -17,19 +27,23 @@ docker tag n8n-enterprise:latest yourusername/n8n-enterprise:latest
 docker push yourusername/n8n-enterprise:latest
 ```
 
-### Option 2: Using Docker Compose
+### Option 3: Using Docker Compose
 
 ```bash
-# Build and run locally
-docker-compose -f docker-compose.enterprise.yml up --build
+# Run with pre-built image (recommended)
+docker-compose -f docker-compose.enterprise.yml up -d
 
-# Or just build the image
-docker-compose -f docker-compose.enterprise.yml build
+# Or build and run locally
+docker-compose -f docker-compose.enterprise.yml up --build
 ```
 
 ## 🚀 Deploying to Render
 
-### Step 1: Push to Docker Hub
+### Step 1: Use Pre-built Image (Skip Docker Hub Setup)
+
+The enterprise image is already available on Docker Hub at `sagebeme/n8n-enterprise:latest`. You can use it directly without building or pushing anything.
+
+### Alternative: Build Your Own Image
 
 1. **Create a Docker Hub account** (if you don't have one)
 2. **Build and push your image:**
@@ -55,7 +69,7 @@ docker push yourusername/n8n-enterprise:latest
 #### Basic Configuration
 - **Name:** `n8n-enterprise`
 - **Environment:** `Docker`
-- **Docker Image:** `yourusername/n8n-enterprise:latest`
+- **Docker Image:** `sagebeme/n8n-enterprise:latest`
 - **Port:** `5678`
 
 #### Environment Variables
@@ -122,14 +136,18 @@ restartPolicyType = "always"
 2. **Connect GitHub repository**
 3. **Configure:**
    - **Source:** GitHub
-   - **Dockerfile:** `Dockerfile.enterprise`
+   - **Docker Image:** `sagebeme/n8n-enterprise:latest`
    - **Port:** `5678`
 4. **Add environment variables**
 5. **Deploy**
 
 ### AWS ECS/Fargate
 
-1. **Build and push to ECR:**
+1. **Use pre-built image** (recommended):
+   - **Docker Image:** `sagebeme/n8n-enterprise:latest`
+
+   **OR** build your own:
+
 ```bash
 # Create ECR repository
 aws ecr create-repository --repository-name n8n-enterprise
@@ -191,7 +209,7 @@ docker run -d --name n8n-enterprise \
   -e DB_POSTGRESDB_PASSWORD=your_password \
   -e DB_POSTGRESDB_SCHEMA=public \
   -v n8n_data:/home/node/.n8n \
-  yourusername/n8n-enterprise:latest
+  sagebeme/n8n-enterprise:latest
 ```
 
 ## 🔒 Security Considerations
