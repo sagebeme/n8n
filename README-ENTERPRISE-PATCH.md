@@ -14,6 +14,7 @@ This repository contains a patch that removes the subscription model from n8n an
 - **Advanced Permissions** - Fine-grained permission control
 - **API Key Scopes** - Scoped API key management
 - **Workflow Diffs** - Compare workflow versions
+- **Insights Dashboard** - Detailed workflow execution analytics
 - **LDAP/SAML/OIDC** - Enterprise authentication
 - **MFA Enforcement** - Multi-factor authentication enforcement
 - **Log Streaming** - Real-time log streaming
