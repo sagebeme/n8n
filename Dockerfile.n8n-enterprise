@@ -40,7 +40,7 @@ RUN sed -i 's/sharing: this\.license\.isSharingEnabled(),/sharing: true,/g' /usr
     sed -i 's/insightsViewDashboard: this\.license\.isInsightsViewDashboardLicensed(),/insightsViewDashboard: true,/g' /usr/local/lib/node_modules/n8n/dist/services/frontend.service.js && \
     sed -i 's/insightsViewHourlyData: this\.license\.isInsightsViewHourlyDataLicensed(),/insightsViewHourlyData: true,/g' /usr/local/lib/node_modules/n8n/dist/services/frontend.service.js
 
-# Patch license.js to always return true for all license checks
+# Comprehensive license.js patches - force all license checks to return true
 RUN sed -i 's/return this\.manager\?\.hasFeatureEnabled(feature) \?\? false;/return true;/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
     sed -i 's/isLicensed.*{.*return.*false.*}/isLicensed() { return true; }/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
     sed -i 's/isSharingEnabled.*{.*return.*false.*}/isSharingEnabled() { return true; }/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
@@ -75,6 +75,43 @@ RUN sed -i 's/return this\.manager\?\.hasFeatureEnabled(feature) \?\? false;/ret
     sed -i 's/isInsightsViewSummaryLicensed.*{.*return.*false.*}/isInsightsViewSummaryLicensed() { return true; }/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
     sed -i 's/isInsightsViewDashboardLicensed.*{.*return.*false.*}/isInsightsViewDashboardLicensed() { return true; }/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
     sed -i 's/isInsightsViewHourlyDataLicensed.*{.*return.*false.*}/isInsightsViewHourlyDataLicensed() { return true; }/g' /usr/local/lib/node_modules/n8n/dist/license.js
+
+# Patch license-state.js to always return true for all license checks
+RUN find /usr/local/lib/node_modules/n8n/dist -name "*license-state*" -type f | while read file; do \
+        sed -i 's/isLicensed.*{.*return.*false.*}/isLicensed() { return true; }/g' "$file"; \
+        sed -i 's/isSharingLicensed.*{.*return.*false.*}/isSharingLicensed() { return true; }/g' "$file"; \
+        sed -i 's/isLogStreamingLicensed.*{.*return.*false.*}/isLogStreamingLicensed() { return true; }/g' "$file"; \
+        sed -i 's/isLdapLicensed.*{.*return.*false.*}/isLdapLicensed() { return true; }/g' "$file"; \
+        sed -i 's/isSamlLicensed.*{.*return.*false.*}/isSamlLicensed() { return true; }/g' "$file"; \
+        sed -i 's/isOidcLicensed.*{.*return.*false.*}/isOidcLicensed() { return true; }/g' "$file"; \
+        sed -i 's/isMFAEnforcementLicensed.*{.*return.*false.*}/isMFAEnforcementLicensed() { return true; }/g' "$file"; \
+        sed -i 's/isAdvancedExecutionFiltersLicensed.*{.*return.*false.*}/isAdvancedExecutionFiltersLicensed() { return true; }/g' "$file"; \
+        sed -i 's/isVariablesLicensed.*{.*return.*false.*}/isVariablesLicensed() { return true; }/g' "$file"; \
+        sed -i 's/isSourceControlLicensed.*{.*return.*false.*}/isSourceControlLicensed() { return true; }/g' "$file"; \
+        sed -i 's/isExternalSecretsLicensed.*{.*return.*false.*}/isExternalSecretsLicensed() { return true; }/g' "$file"; \
+        sed -i 's/isDebugInEditorLicensed.*{.*return.*false.*}/isDebugInEditorLicensed() { return true; }/g' "$file"; \
+        sed -i 's/isWorkerViewLicensed.*{.*return.*false.*}/isWorkerViewLicensed() { return true; }/g' "$file"; \
+        sed -i 's/isAdvancedPermissionsLicensed.*{.*return.*false.*}/isAdvancedPermissionsLicensed() { return true; }/g' "$file"; \
+        sed -i 's/isApiKeyScopesLicensed.*{.*return.*false.*}/isApiKeyScopesLicensed() { return true; }/g' "$file"; \
+        sed -i 's/isWorkflowDiffsLicensed.*{.*return.*false.*}/isWorkflowDiffsLicensed() { return true; }/g' "$file"; \
+        sed -i 's/isWorkflowHistoryLicensed.*{.*return.*false.*}/isWorkflowHistoryLicensed() { return true; }/g' "$file"; \
+        sed -i 's/isBinaryDataS3Licensed.*{.*return.*false.*}/isBinaryDataS3Licensed() { return true; }/g' "$file"; \
+        sed -i 's/isMultipleMainInstancesLicensed.*{.*return.*false.*}/isMultipleMainInstancesLicensed() { return true; }/g' "$file"; \
+        sed -i 's/isAiAssistantLicensed.*{.*return.*false.*}/isAiAssistantLicensed() { return true; }/g' "$file"; \
+        sed -i 's/isAskAiLicensed.*{.*return.*false.*}/isAskAiLicensed() { return true; }/g' "$file"; \
+        sed -i 's/isCommunityNodesCustomRegistryLicensed.*{.*return.*false.*}/isCommunityNodesCustomRegistryLicensed() { return true; }/g' "$file"; \
+        sed -i 's/isAiCreditsLicensed.*{.*return.*false.*}/isAiCreditsLicensed() { return true; }/g' "$file"; \
+        sed -i 's/isFoldersLicensed.*{.*return.*false.*}/isFoldersLicensed() { return true; }/g' "$file"; \
+        sed -i 's/isCustomRolesLicensed.*{.*return.*false.*}/isCustomRolesLicensed() { return true; }/g' "$file"; \
+        sed -i 's/isApiDisabledLicensed.*{.*return.*false.*}/isApiDisabledLicensed() { return false; }/g' "$file"; \
+        sed -i 's/isShowNonProdBannerLicensed.*{.*return.*false.*}/isShowNonProdBannerLicensed() { return false; }/g' "$file"; \
+        sed -i 's/isProjectRoleAdminLicensed.*{.*return.*false.*}/isProjectRoleAdminLicensed() { return true; }/g' "$file"; \
+        sed -i 's/isProjectRoleEditorLicensed.*{.*return.*false.*}/isProjectRoleEditorLicensed() { return true; }/g' "$file"; \
+        sed -i 's/isProjectRoleViewerLicensed.*{.*return.*false.*}/isProjectRoleViewerLicensed() { return true; }/g' "$file"; \
+        sed -i 's/isInsightsViewSummaryLicensed.*{.*return.*false.*}/isInsightsViewSummaryLicensed() { return true; }/g' "$file"; \
+        sed -i 's/isInsightsViewDashboardLicensed.*{.*return.*false.*}/isInsightsViewDashboardLicensed() { return true; }/g' "$file"; \
+        sed -i 's/isInsightsViewHourlyDataLicensed.*{.*return.*false.*}/isInsightsViewHourlyDataLicensed() { return true; }/g' "$file"; \
+    done || true
 
 # Patch insights dashboard license checks
 RUN find /usr/local/lib/node_modules/n8n/dist -name "*insights*" -type f | xargs grep -l "isInsightsDashboardLicensed\|isInsightsSummaryLicensed" | while read file; do \
