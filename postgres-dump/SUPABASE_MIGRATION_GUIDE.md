@@ -141,7 +141,7 @@ If this is for production:
 
 ```bash
 # Dump from Render
-pg_dump "postgresql://n8n_db_9kiq_user:9Hhji1tURxkvAo4sIPFhB0xR8TYX3Pp4@dpg-d31uspbuibrs739cjibg-a.oregon-postgres.render.com/n8n_db_9kiq" > n8n_database_dump.sql
+pg_dump "postgresql://YOUR_USER:YOUR_PASSWORD@YOUR_RENDER_HOST/YOUR_DATABASE" > n8n_database_dump.sql
 
 # Restore to Supabase
 psql "postgresql://postgres:your-password@your-host.supabase.co:5432/postgres" < n8n_database_dump.sql

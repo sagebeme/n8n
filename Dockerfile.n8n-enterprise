@@ -30,7 +30,15 @@ RUN sed -i 's/sharing: this\.license\.isSharingEnabled(),/sharing: true,/g' /usr
     sed -i 's/communityNodesCustomRegistry: this\.license\.isCommunityNodesCustomRegistryLicensed(),/communityNodesCustomRegistry: true,/g' /usr/local/lib/node_modules/n8n/dist/services/frontend.service.js && \
     sed -i 's/aiCredits: this\.license\.isAiCreditsLicensed(),/aiCredits: true,/g' /usr/local/lib/node_modules/n8n/dist/services/frontend.service.js && \
     sed -i 's/folders: this\.license\.isFoldersLicensed(),/folders: true,/g' /usr/local/lib/node_modules/n8n/dist/services/frontend.service.js && \
-    sed -i 's/customRoles: this\.license\.isCustomRolesLicensed(),/customRoles: true,/g' /usr/local/lib/node_modules/n8n/dist/services/frontend.service.js
+    sed -i 's/customRoles: this\.license\.isCustomRolesLicensed(),/customRoles: true,/g' /usr/local/lib/node_modules/n8n/dist/services/frontend.service.js && \
+    sed -i 's/apiDisabled: this\.license\.isApiDisabledLicensed(),/apiDisabled: false,/g' /usr/local/lib/node_modules/n8n/dist/services/frontend.service.js && \
+    sed -i 's/showNonProdBanner: this\.license\.isShowNonProdBannerLicensed(),/showNonProdBanner: false,/g' /usr/local/lib/node_modules/n8n/dist/services/frontend.service.js && \
+    sed -i 's/projectRoleAdmin: this\.license\.isProjectRoleAdminLicensed(),/projectRoleAdmin: true,/g' /usr/local/lib/node_modules/n8n/dist/services/frontend.service.js && \
+    sed -i 's/projectRoleEditor: this\.license\.isProjectRoleEditorLicensed(),/projectRoleEditor: true,/g' /usr/local/lib/node_modules/n8n/dist/services/frontend.service.js && \
+    sed -i 's/projectRoleViewer: this\.license\.isProjectRoleViewerLicensed(),/projectRoleViewer: true,/g' /usr/local/lib/node_modules/n8n/dist/services/frontend.service.js && \
+    sed -i 's/insightsViewSummary: this\.license\.isInsightsViewSummaryLicensed(),/insightsViewSummary: true,/g' /usr/local/lib/node_modules/n8n/dist/services/frontend.service.js && \
+    sed -i 's/insightsViewDashboard: this\.license\.isInsightsViewDashboardLicensed(),/insightsViewDashboard: true,/g' /usr/local/lib/node_modules/n8n/dist/services/frontend.service.js && \
+    sed -i 's/insightsViewHourlyData: this\.license\.isInsightsViewHourlyDataLicensed(),/insightsViewHourlyData: true,/g' /usr/local/lib/node_modules/n8n/dist/services/frontend.service.js
 
 # Patch license.js to always return true for all license checks
 RUN sed -i 's/return this\.manager\?\.hasFeatureEnabled(feature) \?\? false;/return true;/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
@@ -58,7 +66,15 @@ RUN sed -i 's/return this\.manager\?\.hasFeatureEnabled(feature) \?\? false;/ret
     sed -i 's/isCommunityNodesCustomRegistryLicensed.*{.*return.*false.*}/isCommunityNodesCustomRegistryLicensed() { return true; }/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
     sed -i 's/isAiCreditsLicensed.*{.*return.*false.*}/isAiCreditsLicensed() { return true; }/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
     sed -i 's/isFoldersLicensed.*{.*return.*false.*}/isFoldersLicensed() { return true; }/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
-    sed -i 's/isCustomRolesLicensed.*{.*return.*false.*}/isCustomRolesLicensed() { return true; }/g' /usr/local/lib/node_modules/n8n/dist/license.js
+    sed -i 's/isCustomRolesLicensed.*{.*return.*false.*}/isCustomRolesLicensed() { return true; }/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
+    sed -i 's/isApiDisabledLicensed.*{.*return.*false.*}/isApiDisabledLicensed() { return false; }/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
+    sed -i 's/isShowNonProdBannerLicensed.*{.*return.*false.*}/isShowNonProdBannerLicensed() { return false; }/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
+    sed -i 's/isProjectRoleAdminLicensed.*{.*return.*false.*}/isProjectRoleAdminLicensed() { return true; }/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
+    sed -i 's/isProjectRoleEditorLicensed.*{.*return.*false.*}/isProjectRoleEditorLicensed() { return true; }/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
+    sed -i 's/isProjectRoleViewerLicensed.*{.*return.*false.*}/isProjectRoleViewerLicensed() { return true; }/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
+    sed -i 's/isInsightsViewSummaryLicensed.*{.*return.*false.*}/isInsightsViewSummaryLicensed() { return true; }/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
+    sed -i 's/isInsightsViewDashboardLicensed.*{.*return.*false.*}/isInsightsViewDashboardLicensed() { return true; }/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
+    sed -i 's/isInsightsViewHourlyDataLicensed.*{.*return.*false.*}/isInsightsViewHourlyDataLicensed() { return true; }/g' /usr/local/lib/node_modules/n8n/dist/license.js
 
 # Patch insights dashboard license checks
 RUN find /usr/local/lib/node_modules/n8n/dist -name "*insights*" -type f | xargs grep -l "isInsightsDashboardLicensed\|isInsightsSummaryLicensed" | while read file; do \

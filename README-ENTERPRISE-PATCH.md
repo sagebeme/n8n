@@ -4,20 +4,43 @@ This repository contains a patch that removes the subscription model from n8n an
 
 ## 🚀 Features Unlocked
 
+### Core Enterprise Features
 - **Workflow Sharing** - Share workflows with team members
 - **Advanced Execution Filters** - Filter executions with advanced criteria
 - **Variables** - Use variables in workflows
-- **Source Control** - Git integration for workflows
 - **External Secrets** - External secret management
 - **Debug in Editor** - Debug workflows directly in the editor
 - **Worker View** - View and manage workers
 - **Advanced Permissions** - Fine-grained permission control
 - **API Key Scopes** - Scoped API key management
 - **Workflow Diffs** - Compare workflow versions
+- **Workflow History** - Track workflow execution history
+- **Folders** - Organize workflows in folders
+- **Custom Roles** - Create custom user roles
+
+### AI & Automation Features
+- **AI Assistant** - AI-powered workflow assistance
+- **Ask AI** - AI-powered workflow generation
+- **AI Credits** - Unlimited AI usage
+- **Community Nodes Custom Registry** - Custom node registry
+
+### Analytics & Insights
 - **Insights Dashboard** - Detailed workflow execution analytics
+- **Insights Summary** - Workflow performance summaries
+- **Insights Hourly Data** - Granular execution data
+
+### Authentication & Security
 - **LDAP/SAML/OIDC** - Enterprise authentication
 - **MFA Enforcement** - Multi-factor authentication enforcement
 - **Log Streaming** - Real-time log streaming
+
+### Infrastructure Features
+- **Binary Data S3** - S3 storage for binary data
+- **Multiple Main Instances** - Scale across multiple instances
+- **Project Roles** - Admin, Editor, Viewer role management
+
+### Note on Source Control
+- **Source Control** - Disabled to prevent connection errors (can be enabled via environment variables if needed)
 
 ## 📋 Prerequisites
 

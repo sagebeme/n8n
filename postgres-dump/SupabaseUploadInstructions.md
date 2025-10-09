@@ -36,7 +36,7 @@ I've created a Supabase-compatible dump file:
 Upload using `psql` from your local machine:
 ```bash
 cd /path/to/n8n/postgres-dump
-psql "postgresql://postgres:9Hhji1tURxkvAo4sIPFhB0xR8TYX3Pp4@db.akfpjguavhrynxxeiodz.supabase.co:5432/postgres" < n8n_for_supabase.sql
+psql "postgresql://postgres:YOUR_PASSWORD@db.YOUR_PROJECT_REF.supabase.co:5432/postgres" < n8n_for_supabase.sql
 ```
 
 ### Method 3: Split Upload (If file too large)
@@ -49,7 +49,7 @@ split -b 5m n8n_for_supabase.sql dump_part_
 # Upload each part separately
 for file in dump_part_*; do
   echo "Uploading $file..."
-  psql "postgresql://postgres:9Hhji1tURxkvAo4sIPFhB0xR8TYX3Pp4@db.akfpjguavhrynxxeiodz.supabase.co:5432/postgres" < "$file"
+  psql "postgresql://postgres:YOUR_PASSWORD@db.YOUR_PROJECT_REF.supabase.co:5432/postgres" < "$file"
 done
 ```
 
