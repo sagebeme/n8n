@@ -80,18 +80,7 @@ RUN find /usr/local/lib/node_modules/n8n/dist -name "*workflow*" -type f | xargs
         sed -i 's/this\.licenseState\.isSharingLicensed()/true/g' "$file"; \
     done || true
 
-# Patch source control connection checks to prevent errors
-RUN find /usr/local/lib/node_modules/n8n/dist -name "*source-control*" -type f | while read file; do \
-        sed -i 's/isSourceControlConnected()/true/g' "$file"; \
-        sed -i 's/isSourceControlLicensedAndEnabled()/true/g' "$file"; \
-        sed -i 's/source_control_not_connected/source_control_connected/g' "$file"; \
-    done || true
-
-# Patch source control middleware to always allow access
-RUN find /usr/local/lib/node_modules/n8n/dist -name "*middleware*" -type f | xargs grep -l "source_control_not_connected" | while read file; do \
-        sed -i 's/source_control_not_connected/source_control_connected/g' "$file"; \
-        sed -i 's/res\.status(412)/res.status(200)/g' "$file"; \
-    done || true
+# Skip source control patches to avoid syntax errors - will disable via environment variables instead
 
 # Patch quota limits to be unlimited (-1)
 RUN find /usr/local/lib/node_modules/n8n/dist -name "*license*" -type f | while read file; do \
