@@ -16,12 +16,15 @@ RUN sed -i 's/sharing: this\.license\.isSharingEnabled(),/sharing: true,/g' /usr
     sed -i 's/advancedExecutionFilters: this\.license\.isAdvancedExecutionFiltersEnabled(),/advancedExecutionFilters: true,/g' /usr/local/lib/node_modules/n8n/dist/services/frontend.service.js && \
     sed -i 's/variables: this\.license\.isVariablesEnabled(),/variables: true,/g' /usr/local/lib/node_modules/n8n/dist/services/frontend.service.js && \
     sed -i 's/sourceControl: this\.license\.isSourceControlLicensed(),/sourceControl: true,/g' /usr/local/lib/node_modules/n8n/dist/services/frontend.service.js && \
+    sed -i 's/auditLogs: this\.license\.isAuditLogsLicensed(),/auditLogs: true,/g' /usr/local/lib/node_modules/n8n/dist/services/frontend.service.js && \
     sed -i 's/externalSecrets: this\.license\.isExternalSecretsEnabled(),/externalSecrets: true,/g' /usr/local/lib/node_modules/n8n/dist/services/frontend.service.js && \
     sed -i 's/debugInEditor: this\.license\.isDebugInEditorLicensed(),/debugInEditor: true,/g' /usr/local/lib/node_modules/n8n/dist/services/frontend.service.js && \
     sed -i 's/workerView: this\.license\.isWorkerViewLicensed(),/workerView: true,/g' /usr/local/lib/node_modules/n8n/dist/services/frontend.service.js && \
     sed -i 's/advancedPermissions: this\.license\.isAdvancedPermissionsLicensed(),/advancedPermissions: true,/g' /usr/local/lib/node_modules/n8n/dist/services/frontend.service.js && \
     sed -i 's/apiKeyScopes: this\.license\.isApiKeyScopesEnabled(),/apiKeyScopes: true,/g' /usr/local/lib/node_modules/n8n/dist/services/frontend.service.js && \
     sed -i 's/workflowDiffs: this\.licenseState\.isWorkflowDiffsLicensed(),/workflowDiffs: true,/g' /usr/local/lib/node_modules/n8n/dist/services/frontend.service.js && \
+    sed -i 's/apiDisabled: this\.license\.isAPIDisabled(),/apiDisabled: false,/g' /usr/local/lib/node_modules/n8n/dist/services/frontend.service.js && \
+    sed -i 's/showNonProdBanner: this\.license\.isShowNonProdBannerLicensed(),/showNonProdBanner: false,/g' /usr/local/lib/node_modules/n8n/dist/services/frontend.service.js && \
     sed -i 's/workflowHistory: this\.license\.isWorkflowHistoryLicensed(),/workflowHistory: true,/g' /usr/local/lib/node_modules/n8n/dist/services/frontend.service.js && \
     sed -i 's/binaryDataS3: this\.license\.isBinaryDataS3Licensed(),/binaryDataS3: true,/g' /usr/local/lib/node_modules/n8n/dist/services/frontend.service.js && \
     sed -i 's/multipleMainInstances: this\.license\.isMultipleMainInstancesLicensed(),/multipleMainInstances: true,/g' /usr/local/lib/node_modules/n8n/dist/services/frontend.service.js && \
@@ -52,6 +55,7 @@ RUN sed -i 's/return this\.manager\?\.hasFeatureEnabled(feature) \?\? false;/ret
     sed -i 's/isAdvancedExecutionFiltersEnabled.*{.*return.*false.*}/isAdvancedExecutionFiltersEnabled() { return true; }/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
     sed -i 's/isVariablesEnabled.*{.*return.*false.*}/isVariablesEnabled() { return true; }/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
     sed -i 's/isSourceControlLicensed.*{.*return.*false.*}/isSourceControlLicensed() { return true; }/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
+    sed -i 's/isAuditLogsLicensed.*{.*return.*false.*}/isAuditLogsLicensed() { return true; }/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
     sed -i 's/isExternalSecretsEnabled.*{.*return.*false.*}/isExternalSecretsEnabled() { return true; }/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
     sed -i 's/isDebugInEditorLicensed.*{.*return.*false.*}/isDebugInEditorLicensed() { return true; }/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
     sed -i 's/isWorkerViewLicensed.*{.*return.*false.*}/isWorkerViewLicensed() { return true; }/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
@@ -67,8 +71,9 @@ RUN sed -i 's/return this\.manager\?\.hasFeatureEnabled(feature) \?\? false;/ret
     sed -i 's/isAiCreditsLicensed.*{.*return.*false.*}/isAiCreditsLicensed() { return true; }/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
     sed -i 's/isFoldersLicensed.*{.*return.*false.*}/isFoldersLicensed() { return true; }/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
     sed -i 's/isCustomRolesLicensed.*{.*return.*false.*}/isCustomRolesLicensed() { return true; }/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
-    sed -i 's/isApiDisabledLicensed.*{.*return.*false.*}/isApiDisabledLicensed() { return false; }/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
+    sed -i 's/isAPIDisabled.*{.*return.*false.*}/isAPIDisabled() { return false; }/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
     sed -i 's/isShowNonProdBannerLicensed.*{.*return.*false.*}/isShowNonProdBannerLicensed() { return false; }/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
+    sed -i 's/isCustomNpmRegistryEnabled.*{.*return.*false.*}/isCustomNpmRegistryEnabled() { return true; }/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
     sed -i 's/isProjectRoleAdminLicensed.*{.*return.*false.*}/isProjectRoleAdminLicensed() { return true; }/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
     sed -i 's/isProjectRoleEditorLicensed.*{.*return.*false.*}/isProjectRoleEditorLicensed() { return true; }/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
     sed -i 's/isProjectRoleViewerLicensed.*{.*return.*false.*}/isProjectRoleViewerLicensed() { return true; }/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
@@ -88,6 +93,7 @@ RUN find /usr/local/lib/node_modules/n8n/dist -name "*license-state*" -type f | 
         sed -i 's/isAdvancedExecutionFiltersLicensed.*{.*return.*false.*}/isAdvancedExecutionFiltersLicensed() { return true; }/g' "$file"; \
         sed -i 's/isVariablesLicensed.*{.*return.*false.*}/isVariablesLicensed() { return true; }/g' "$file"; \
         sed -i 's/isSourceControlLicensed.*{.*return.*false.*}/isSourceControlLicensed() { return true; }/g' "$file"; \
+        sed -i 's/isAuditLogsLicensed.*{.*return.*false.*}/isAuditLogsLicensed() { return true; }/g' "$file"; \
         sed -i 's/isExternalSecretsLicensed.*{.*return.*false.*}/isExternalSecretsLicensed() { return true; }/g' "$file"; \
         sed -i 's/isDebugInEditorLicensed.*{.*return.*false.*}/isDebugInEditorLicensed() { return true; }/g' "$file"; \
         sed -i 's/isWorkerViewLicensed.*{.*return.*false.*}/isWorkerViewLicensed() { return true; }/g' "$file"; \
@@ -103,8 +109,9 @@ RUN find /usr/local/lib/node_modules/n8n/dist -name "*license-state*" -type f | 
         sed -i 's/isAiCreditsLicensed.*{.*return.*false.*}/isAiCreditsLicensed() { return true; }/g' "$file"; \
         sed -i 's/isFoldersLicensed.*{.*return.*false.*}/isFoldersLicensed() { return true; }/g' "$file"; \
         sed -i 's/isCustomRolesLicensed.*{.*return.*false.*}/isCustomRolesLicensed() { return true; }/g' "$file"; \
-        sed -i 's/isApiDisabledLicensed.*{.*return.*false.*}/isApiDisabledLicensed() { return false; }/g' "$file"; \
+        sed -i 's/isAPIDisabled.*{.*return.*false.*}/isAPIDisabled() { return false; }/g' "$file"; \
         sed -i 's/isShowNonProdBannerLicensed.*{.*return.*false.*}/isShowNonProdBannerLicensed() { return false; }/g' "$file"; \
+        sed -i 's/isCustomNpmRegistryLicensed.*{.*return.*false.*}/isCustomNpmRegistryLicensed() { return true; }/g' "$file"; \
         sed -i 's/isProjectRoleAdminLicensed.*{.*return.*false.*}/isProjectRoleAdminLicensed() { return true; }/g' "$file"; \
         sed -i 's/isProjectRoleEditorLicensed.*{.*return.*false.*}/isProjectRoleEditorLicensed() { return true; }/g' "$file"; \
         sed -i 's/isProjectRoleViewerLicensed.*{.*return.*false.*}/isProjectRoleViewerLicensed() { return true; }/g' "$file"; \
@@ -121,16 +128,52 @@ RUN find /usr/local/lib/node_modules/n8n/dist -name "*insights*" -type f | xargs
         sed -i 's/this\.licenseState\.isInsightsSummaryLicensed()/true/g' "$file"; \
     done || true
 
+# COMPREHENSIVE SHARING PATCHES - Fix ALL sharing validation layers
 # Patch sharing service to always allow sharing
 RUN find /usr/local/lib/node_modules/n8n/dist -name "*sharing*" -type f | while read file; do \
         sed -i 's/this\.license\.isSharingEnabled()/true/g' "$file"; \
         sed -i 's/this\.licenseState\.isSharingLicensed()/true/g' "$file"; \
+        sed -i 's/isSharingEnabled()/true/g' "$file"; \
+        sed -i 's/isSharingLicensed()/true/g' "$file"; \
     done || true
 
-# Patch workflow sharing controller
+# Patch workflow sharing controller and all workflow-related files
 RUN find /usr/local/lib/node_modules/n8n/dist -name "*workflow*" -type f | xargs grep -l "isSharingEnabled\|isSharingLicensed" | while read file; do \
         sed -i 's/this\.license\.isSharingEnabled()/true/g' "$file"; \
         sed -i 's/this\.licenseState\.isSharingLicensed()/true/g' "$file"; \
+        sed -i 's/isSharingEnabled()/true/g' "$file"; \
+        sed -i 's/isSharingLicensed()/true/g' "$file"; \
+    done || true
+
+# Patch executions controller sharing checks
+RUN find /usr/local/lib/node_modules/n8n/dist -name "*execution*" -type f | xargs grep -l "isSharingEnabled" | while read file; do \
+        sed -i 's/this\.license\.isSharingEnabled()/true/g' "$file"; \
+        sed -i 's/isSharingEnabled()/true/g' "$file"; \
+    done || true
+
+# Patch public API workflows service sharing checks
+RUN find /usr/local/lib/node_modules/n8n/dist -name "*public-api*" -type f | xargs grep -l "isSharingEnabled" | while read file; do \
+        sed -i 's/Container\.get(License)\.isSharingEnabled()/true/g' "$file"; \
+        sed -i 's/isSharingEnabled()/true/g' "$file"; \
+    done || true
+
+# Patch credentials sharing controller
+RUN find /usr/local/lib/node_modules/n8n/dist -name "*credential*" -type f | xargs grep -l "isSharingEnabled\|isSharingLicensed" | while read file; do \
+        sed -i 's/this\.license\.isSharingEnabled()/true/g' "$file"; \
+        sed -i 's/this\.licenseState\.isSharingLicensed()/true/g' "$file"; \
+        sed -i 's/isSharingEnabled()/true/g' "$file"; \
+        sed -i 's/isSharingLicensed()/true/g' "$file"; \
+    done || true
+
+# Patch @Licensed decorator middleware to always allow sharing
+RUN find /usr/local/lib/node_modules/n8n/dist -name "*middleware*" -type f | xargs grep -l "feat:sharing\|sharing" | while read file; do \
+        sed -i 's/feat:sharing/feat:sharing-unlocked/g' "$file"; \
+        sed -i 's/res\.status(412)/res.status(200)/g' "$file"; \
+    done || true
+
+# Patch controller registry to always allow sharing license checks
+RUN find /usr/local/lib/node_modules/n8n/dist -name "*controller*" -type f | xargs grep -l "feat:sharing" | while read file; do \
+        sed -i 's/feat:sharing/feat:sharing-unlocked/g' "$file"; \
     done || true
 
 # Enable source control with careful syntax-preserving patches

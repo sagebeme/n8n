@@ -33,6 +33,7 @@ This repository contains a patch that removes the subscription model from n8n an
 - **LDAP/SAML/OIDC** - Enterprise authentication
 - **MFA Enforcement** - Multi-factor authentication enforcement
 - **Log Streaming** - Real-time log streaming
+- **Audit Logs** - Comprehensive audit trail and logging
 
 ### Infrastructure Features
 - **Binary Data S3** - S3 storage for binary data
