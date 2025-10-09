@@ -96,23 +96,23 @@ RUN find /usr/local/lib/node_modules/n8n/dist -name "*workflow*" -type f | xargs
         sed -i 's/this\.licenseState\.isSharingLicensed()/true/g' "$file"; \
     done || true
 
-# Completely disable source control in frontend to prevent connection errors
+# Enable source control with careful syntax-preserving patches
 RUN find /usr/local/lib/node_modules/n8n/dist -name "*source-control*" -type f | while read file; do \
-        sed -i 's/isSourceControlConnected()/false/g' "$file"; \
-        sed -i 's/isSourceControlLicensedAndEnabled()/false/g' "$file"; \
-        sed -i 's/source_control_not_connected/source_control_disabled/g' "$file"; \
+        sed -i 's/isSourceControlConnected() { return false; }/isSourceControlConnected() { return true; }/g' "$file"; \
+        sed -i 's/isSourceControlLicensedAndEnabled() { return false; }/isSourceControlLicensedAndEnabled() { return true; }/g' "$file"; \
+        sed -i 's/source_control_not_connected/source_control_connected/g' "$file"; \
     done || true
 
-# Patch source control middleware to return success instead of error
+# Patch source control middleware to return success for connection
 RUN find /usr/local/lib/node_modules/n8n/dist -name "*middleware*" -type f | xargs grep -l "source_control" | while read file; do \
-        sed -i 's/source_control_not_connected/source_control_disabled/g' "$file"; \
+        sed -i 's/source_control_not_connected/source_control_connected/g' "$file"; \
         sed -i 's/res\.status(412)/res.status(200)/g' "$file"; \
     done || true
 
-# Patch frontend source control components to hide the feature entirely
+# Enable source control components in frontend with precise replacements
 RUN find /usr/local/lib/node_modules/n8n/dist -name "*frontend*" -type f | while read file; do \
-        sed -i 's/isSourceControlEnabled()/false/g' "$file"; \
-        sed -i 's/isSourceControlLicensed()/false/g' "$file"; \
+        sed -i 's/isSourceControlEnabled() { return false; }/isSourceControlEnabled() { return true; }/g' "$file"; \
+        sed -i 's/isSourceControlLicensed() { return false; }/isSourceControlLicensed() { return true; }/g' "$file"; \
     done || true
 
 # Patch quota limits to be unlimited (-1)
@@ -139,9 +139,11 @@ ENV N8N_LICENSE_SERVER_URL_TRIAL=""
 ENV N8N_LICENSE_SERVER_URL_TRIAL_ACTIVATION=""
 ENV N8N_LICENSE_SERVER_URL_TRIAL_ACTIVATION_RETRY=""
 
-# Disable source control connection checks to prevent errors
-ENV N8N_SOURCE_CONTROL_DISABLED="true"
-ENV N8N_SOURCE_CONTROL_CONNECTED="false"
+# Enable source control and configure for GitHub repository
+ENV N8N_SOURCE_CONTROL_DISABLED="false"
+ENV N8N_SOURCE_CONTROL_CONNECTED="true"
+ENV N8N_SOURCE_CONTROL_REPOSITORY_URL="https://github.com/sagebeme/n8n.git"
+ENV N8N_SOURCE_CONTROL_REPOSITORY_BRANCH="master"
 
 # Switch back to node user
 USER node
@@ -149,7 +151,7 @@ USER node
 # Expose port
 EXPOSE 5678
 
-# Keep the original entrypoint and cmd from the base image
-ENTRYPOINT ["docker-entrypoint.sh"]
-CMD ["n8n"]
+# Use the exact same configuration as the base image
+ENTRYPOINT ["tini", "--", "/docker-entrypoint.sh"]
+CMD []
 
