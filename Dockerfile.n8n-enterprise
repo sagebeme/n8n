@@ -41,45 +41,77 @@ RUN sed -i 's/sharing: this\.license\.isSharingEnabled(),/sharing: true,/g' /usr
     sed -i 's/projectRoleViewer: this\.license\.isProjectRoleViewerLicensed(),/projectRoleViewer: true,/g' /usr/local/lib/node_modules/n8n/dist/services/frontend.service.js && \
     sed -i 's/insightsViewSummary: this\.license\.isInsightsViewSummaryLicensed(),/insightsViewSummary: true,/g' /usr/local/lib/node_modules/n8n/dist/services/frontend.service.js && \
     sed -i 's/insightsViewDashboard: this\.license\.isInsightsViewDashboardLicensed(),/insightsViewDashboard: true,/g' /usr/local/lib/node_modules/n8n/dist/services/frontend.service.js && \
-    sed -i 's/insightsViewHourlyData: this\.license\.isInsightsViewHourlyDataLicensed(),/insightsViewHourlyData: true,/g' /usr/local/lib/node_modules/n8n/dist/services/frontend.service.js
+    sed -i 's/insightsViewHourlyData: this\.license\.isInsightsViewHourlyDataLicensed(),/insightsViewHourlyData: true,/g' /usr/local/lib/node_modules/n8n/dist/services/frontend.service.js && \
+    sed -i 's/auditLogs: false,/auditLogs: true,/g' /usr/local/lib/node_modules/n8n/dist/services/frontend.service.js && \
+    sed -i 's/workflowDiffs: false,/workflowDiffs: true,/g' /usr/local/lib/node_modules/n8n/dist/services/frontend.service.js && \
+    sed -i 's/sourceControl: true,/sourceControl: true,\n\t\t\tauditLogs: true,\n\t\t\tworkflowDiffs: true,/g' /usr/local/lib/node_modules/n8n/dist/services/frontend.service.js
 
 # Comprehensive license.js patches - force all license checks to return true
-RUN sed -i 's/return this\.manager\?\.hasFeatureEnabled(feature) \?\? false;/return true;/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
-    sed -i 's/isLicensed.*{.*return.*false.*}/isLicensed() { return true; }/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
-    sed -i 's/isSharingEnabled.*{.*return.*false.*}/isSharingEnabled() { return true; }/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
-    sed -i 's/isLogStreamingEnabled.*{.*return.*false.*}/isLogStreamingEnabled() { return true; }/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
-    sed -i 's/isLdapEnabled.*{.*return.*false.*}/isLdapEnabled() { return true; }/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
-    sed -i 's/isSamlEnabled.*{.*return.*false.*}/isSamlEnabled() { return true; }/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
-    sed -i 's/isOidcLicensed.*{.*return.*false.*}/isOidcLicensed() { return true; }/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
-    sed -i 's/isMFAEnforcementLicensed.*{.*return.*false.*}/isMFAEnforcementLicensed() { return true; }/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
-    sed -i 's/isAdvancedExecutionFiltersEnabled.*{.*return.*false.*}/isAdvancedExecutionFiltersEnabled() { return true; }/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
-    sed -i 's/isVariablesEnabled.*{.*return.*false.*}/isVariablesEnabled() { return true; }/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
-    sed -i 's/isSourceControlLicensed.*{.*return.*false.*}/isSourceControlLicensed() { return true; }/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
-    sed -i 's/isAuditLogsLicensed.*{.*return.*false.*}/isAuditLogsLicensed() { return true; }/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
-    sed -i 's/isExternalSecretsEnabled.*{.*return.*false.*}/isExternalSecretsEnabled() { return true; }/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
-    sed -i 's/isDebugInEditorLicensed.*{.*return.*false.*}/isDebugInEditorLicensed() { return true; }/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
-    sed -i 's/isWorkerViewLicensed.*{.*return.*false.*}/isWorkerViewLicensed() { return true; }/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
-    sed -i 's/isAdvancedPermissionsLicensed.*{.*return.*false.*}/isAdvancedPermissionsLicensed() { return true; }/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
-    sed -i 's/isApiKeyScopesEnabled.*{.*return.*false.*}/isApiKeyScopesEnabled() { return true; }/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
-    sed -i 's/isWorkflowDiffsLicensed.*{.*return.*false.*}/isWorkflowDiffsLicensed() { return true; }/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
-    sed -i 's/isWorkflowHistoryLicensed.*{.*return.*false.*}/isWorkflowHistoryLicensed() { return true; }/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
-    sed -i 's/isBinaryDataS3Licensed.*{.*return.*false.*}/isBinaryDataS3Licensed() { return true; }/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
-    sed -i 's/isMultipleMainInstancesLicensed.*{.*return.*false.*}/isMultipleMainInstancesLicensed() { return true; }/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
-    sed -i 's/isAiAssistantLicensed.*{.*return.*false.*}/isAiAssistantLicensed() { return true; }/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
-    sed -i 's/isAskAiLicensed.*{.*return.*false.*}/isAskAiLicensed() { return true; }/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
-    sed -i 's/isCommunityNodesCustomRegistryLicensed.*{.*return.*false.*}/isCommunityNodesCustomRegistryLicensed() { return true; }/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
-    sed -i 's/isAiCreditsLicensed.*{.*return.*false.*}/isAiCreditsLicensed() { return true; }/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
-    sed -i 's/isFoldersLicensed.*{.*return.*false.*}/isFoldersLicensed() { return true; }/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
-    sed -i 's/isCustomRolesLicensed.*{.*return.*false.*}/isCustomRolesLicensed() { return true; }/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
-    sed -i 's/isAPIDisabled.*{.*return.*false.*}/isAPIDisabled() { return false; }/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
-    sed -i 's/isShowNonProdBannerLicensed.*{.*return.*false.*}/isShowNonProdBannerLicensed() { return false; }/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
-    sed -i 's/isCustomNpmRegistryEnabled.*{.*return.*false.*}/isCustomNpmRegistryEnabled() { return true; }/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
-    sed -i 's/isProjectRoleAdminLicensed.*{.*return.*false.*}/isProjectRoleAdminLicensed() { return true; }/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
-    sed -i 's/isProjectRoleEditorLicensed.*{.*return.*false.*}/isProjectRoleEditorLicensed() { return true; }/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
-    sed -i 's/isProjectRoleViewerLicensed.*{.*return.*false.*}/isProjectRoleViewerLicensed() { return true; }/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
-    sed -i 's/isInsightsViewSummaryLicensed.*{.*return.*false.*}/isInsightsViewSummaryLicensed() { return true; }/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
-    sed -i 's/isInsightsViewDashboardLicensed.*{.*return.*false.*}/isInsightsViewDashboardLicensed() { return true; }/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
-    sed -i 's/isInsightsViewHourlyDataLicensed.*{.*return.*false.*}/isInsightsViewHourlyDataLicensed() { return true; }/g' /usr/local/lib/node_modules/n8n/dist/license.js
+RUN sed -i 's/isLicensed(feature) {/isLicensed(feature) { return true; \/\/ /g' /usr/local/lib/node_modules/n8n/dist/license.js && \
+    sed -i 's/return this\.manager\?\.hasFeatureEnabled(feature) \?\? false;/return true;/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
+    sed -i '/isLicensed(feature) { return true; \/\/ /,/^    }/c\    isLicensed(feature) {\n        return true;\n    }' /usr/local/lib/node_modules/n8n/dist/license.js && \
+    sed -i 's/isSharingEnabled() {/isSharingEnabled() { return true; \/\/ /g' /usr/local/lib/node_modules/n8n/dist/license.js && \
+    sed -i 's/return this\.isLicensed(constants_1\.LICENSE_FEATURES\.SHARING);/return true;/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
+    sed -i 's/isLogStreamingEnabled() {/isLogStreamingEnabled() { return true; \/\/ /g' /usr/local/lib/node_modules/n8n/dist/license.js && \
+    sed -i 's/return this\.isLicensed(constants_1\.LICENSE_FEATURES\.LOG_STREAMING);/return true;/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
+    sed -i 's/isLdapEnabled() {/isLdapEnabled() { return true; \/\/ /g' /usr/local/lib/node_modules/n8n/dist/license.js && \
+    sed -i 's/return this\.isLicensed(constants_1\.LICENSE_FEATURES\.LDAP);/return true;/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
+    sed -i 's/isSamlEnabled() {/isSamlEnabled() { return true; \/\/ /g' /usr/local/lib/node_modules/n8n/dist/license.js && \
+    sed -i 's/return this\.isLicensed(constants_1\.LICENSE_FEATURES\.SAML);/return true;/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
+    sed -i 's/isOidcLicensed() {/isOidcLicensed() { return true; \/\/ /g' /usr/local/lib/node_modules/n8n/dist/license.js && \
+    sed -i 's/return this\.isLicensed(constants_1\.LICENSE_FEATURES\.OIDC);/return true;/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
+    sed -i 's/isMFAEnforcementLicensed() {/isMFAEnforcementLicensed() { return true; \/\/ /g' /usr/local/lib/node_modules/n8n/dist/license.js && \
+    sed -i 's/return this\.isLicensed(constants_1\.LICENSE_FEATURES\.MFA_ENFORCEMENT);/return true;/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
+    sed -i 's/isAdvancedExecutionFiltersEnabled() {/isAdvancedExecutionFiltersEnabled() { return true; \/\/ /g' /usr/local/lib/node_modules/n8n/dist/license.js && \
+    sed -i 's/return this\.isLicensed(constants_1\.LICENSE_FEATURES\.ADVANCED_EXECUTION_FILTERS);/return true;/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
+    sed -i 's/isVariablesEnabled() {/isVariablesEnabled() { return true; \/\/ /g' /usr/local/lib/node_modules/n8n/dist/license.js && \
+    sed -i 's/return this\.isLicensed(constants_1\.LICENSE_FEATURES\.VARIABLES);/return true;/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
+    sed -i 's/isSourceControlLicensed() {/isSourceControlLicensed() { return true; \/\/ /g' /usr/local/lib/node_modules/n8n/dist/license.js && \
+    sed -i 's/return this\.isLicensed(constants_1\.LICENSE_FEATURES\.SOURCE_CONTROL);/return true;/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
+    sed -i 's/isExternalSecretsEnabled() {/isExternalSecretsEnabled() { return true; \/\/ /g' /usr/local/lib/node_modules/n8n/dist/license.js && \
+    sed -i 's/return this\.isLicensed(constants_1\.LICENSE_FEATURES\.EXTERNAL_SECRETS);/return true;/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
+    sed -i 's/isDebugInEditorLicensed() {/isDebugInEditorLicensed() { return true; \/\/ /g' /usr/local/lib/node_modules/n8n/dist/license.js && \
+    sed -i 's/return this\.isLicensed(constants_1\.LICENSE_FEATURES\.DEBUG_IN_EDITOR);/return true;/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
+    sed -i 's/isWorkerViewLicensed() {/isWorkerViewLicensed() { return true; \/\/ /g' /usr/local/lib/node_modules/n8n/dist/license.js && \
+    sed -i 's/return this\.isLicensed(constants_1\.LICENSE_FEATURES\.WORKER_VIEW);/return true;/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
+    sed -i 's/isAdvancedPermissionsLicensed() {/isAdvancedPermissionsLicensed() { return true; \/\/ /g' /usr/local/lib/node_modules/n8n/dist/license.js && \
+    sed -i 's/return this\.isLicensed(constants_1\.LICENSE_FEATURES\.ADVANCED_PERMISSIONS);/return true;/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
+    sed -i 's/isApiKeyScopesEnabled() {/isApiKeyScopesEnabled() { return true; \/\/ /g' /usr/local/lib/node_modules/n8n/dist/license.js && \
+    sed -i 's/return this\.isLicensed(constants_1\.LICENSE_FEATURES\.API_KEY_SCOPES);/return true;/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
+    sed -i 's/isWorkflowHistoryLicensed() {/isWorkflowHistoryLicensed() { return true; \/\/ /g' /usr/local/lib/node_modules/n8n/dist/license.js && \
+    sed -i 's/return this\.isLicensed(constants_1\.LICENSE_FEATURES\.WORKFLOW_HISTORY);/return true;/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
+    sed -i 's/isBinaryDataS3Licensed() {/isBinaryDataS3Licensed() { return true; \/\/ /g' /usr/local/lib/node_modules/n8n/dist/license.js && \
+    sed -i 's/return this\.isLicensed(constants_1\.LICENSE_FEATURES\.BINARY_DATA_S3);/return true;/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
+    sed -i 's/isMultipleMainInstancesLicensed() {/isMultipleMainInstancesLicensed() { return true; \/\/ /g' /usr/local/lib/node_modules/n8n/dist/license.js && \
+    sed -i 's/return this\.isLicensed(constants_1\.LICENSE_FEATURES\.MULTIPLE_MAIN_INSTANCES);/return true;/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
+    sed -i 's/isAiAssistantLicensed() {/isAiAssistantLicensed() { return true; \/\/ /g' /usr/local/lib/node_modules/n8n/dist/license.js && \
+    sed -i 's/return this\.isLicensed(constants_1\.LICENSE_FEATURES\.AI_ASSISTANT);/return true;/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
+    sed -i 's/isAskAiLicensed() {/isAskAiLicensed() { return true; \/\/ /g' /usr/local/lib/node_modules/n8n/dist/license.js && \
+    sed -i 's/return this\.isLicensed(constants_1\.LICENSE_FEATURES\.ASK_AI);/return true;/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
+    sed -i 's/isCommunityNodesCustomRegistryLicensed() {/isCommunityNodesCustomRegistryLicensed() { return true; \/\/ /g' /usr/local/lib/node_modules/n8n/dist/license.js && \
+    sed -i 's/return this\.isLicensed(constants_1\.LICENSE_FEATURES\.COMMUNITY_NODES_CUSTOM_REGISTRY);/return true;/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
+    sed -i 's/isAiCreditsLicensed() {/isAiCreditsLicensed() { return true; \/\/ /g' /usr/local/lib/node_modules/n8n/dist/license.js && \
+    sed -i 's/return this\.isLicensed(constants_1\.LICENSE_FEATURES\.AI_CREDITS);/return true;/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
+    sed -i 's/isFoldersLicensed() {/isFoldersLicensed() { return true; \/\/ /g' /usr/local/lib/node_modules/n8n/dist/license.js && \
+    sed -i 's/return this\.isLicensed(constants_1\.LICENSE_FEATURES\.FOLDERS);/return true;/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
+    sed -i 's/isCustomRolesLicensed() {/isCustomRolesLicensed() { return true; \/\/ /g' /usr/local/lib/node_modules/n8n/dist/license.js && \
+    sed -i 's/return this\.isLicensed(constants_1\.LICENSE_FEATURES\.CUSTOM_ROLES);/return true;/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
+    sed -i 's/isAPIDisabled() {/isAPIDisabled() { return false; \/\/ /g' /usr/local/lib/node_modules/n8n/dist/license.js && \
+    sed -i 's/return this\.isLicensed(constants_1\.LICENSE_FEATURES\.API_DISABLED);/return false;/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
+    sed -i 's/isShowNonProdBannerLicensed() {/isShowNonProdBannerLicensed() { return false; \/\/ /g' /usr/local/lib/node_modules/n8n/dist/license.js && \
+    sed -i 's/return this\.isLicensed(constants_1\.LICENSE_FEATURES\.SHOW_NON_PROD_BANNER);/return false;/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
+    sed -i 's/isProjectRoleAdminLicensed() {/isProjectRoleAdminLicensed() { return true; \/\/ /g' /usr/local/lib/node_modules/n8n/dist/license.js && \
+    sed -i 's/return this\.isLicensed(constants_1\.LICENSE_FEATURES\.PROJECT_ROLE_ADMIN);/return true;/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
+    sed -i 's/isProjectRoleEditorLicensed() {/isProjectRoleEditorLicensed() { return true; \/\/ /g' /usr/local/lib/node_modules/n8n/dist/license.js && \
+    sed -i 's/return this\.isLicensed(constants_1\.LICENSE_FEATURES\.PROJECT_ROLE_EDITOR);/return true;/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
+    sed -i 's/isProjectRoleViewerLicensed() {/isProjectRoleViewerLicensed() { return true; \/\/ /g' /usr/local/lib/node_modules/n8n/dist/license.js && \
+    sed -i 's/return this\.isLicensed(constants_1\.LICENSE_FEATURES\.PROJECT_ROLE_VIEWER);/return true;/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
+    sed -i 's/isInsightsViewSummaryLicensed() {/isInsightsViewSummaryLicensed() { return true; \/\/ /g' /usr/local/lib/node_modules/n8n/dist/license.js && \
+    sed -i 's/return this\.isLicensed(constants_1\.LICENSE_FEATURES\.INSIGHTS_VIEW_SUMMARY);/return true;/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
+    sed -i 's/isInsightsViewDashboardLicensed() {/isInsightsViewDashboardLicensed() { return true; \/\/ /g' /usr/local/lib/node_modules/n8n/dist/license.js && \
+    sed -i 's/return this\.isLicensed(constants_1\.LICENSE_FEATURES\.INSIGHTS_VIEW_DASHBOARD);/return true;/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
+    sed -i 's/isInsightsViewHourlyDataLicensed() {/isInsightsViewHourlyDataLicensed() { return true; \/\/ /g' /usr/local/lib/node_modules/n8n/dist/license.js && \
+    sed -i 's/return this\.isLicensed(constants_1\.LICENSE_FEATURES\.INSIGHTS_VIEW_HOURLY_DATA);/return true;/g' /usr/local/lib/node_modules/n8n/dist/license.js
 
 # Patch license-state.js to always return true for all license checks
 RUN find /usr/local/lib/node_modules/n8n/dist -name "*license-state*" -type f | while read file; do \
@@ -176,24 +208,7 @@ RUN find /usr/local/lib/node_modules/n8n/dist -name "*controller*" -type f | xar
         sed -i 's/feat:sharing/feat:sharing-unlocked/g' "$file"; \
     done || true
 
-# Enable source control with careful syntax-preserving patches
-RUN find /usr/local/lib/node_modules/n8n/dist -name "*source-control*" -type f | while read file; do \
-        sed -i 's/isSourceControlConnected() { return false; }/isSourceControlConnected() { return true; }/g' "$file"; \
-        sed -i 's/isSourceControlLicensedAndEnabled() { return false; }/isSourceControlLicensedAndEnabled() { return true; }/g' "$file"; \
-        sed -i 's/source_control_not_connected/source_control_connected/g' "$file"; \
-    done || true
-
-# Patch source control middleware to return success for connection
-RUN find /usr/local/lib/node_modules/n8n/dist -name "*middleware*" -type f | xargs grep -l "source_control" | while read file; do \
-        sed -i 's/source_control_not_connected/source_control_connected/g' "$file"; \
-        sed -i 's/res\.status(412)/res.status(200)/g' "$file"; \
-    done || true
-
-# Enable source control components in frontend with precise replacements
-RUN find /usr/local/lib/node_modules/n8n/dist -name "*frontend*" -type f | while read file; do \
-        sed -i 's/isSourceControlEnabled() { return false; }/isSourceControlEnabled() { return true; }/g' "$file"; \
-        sed -i 's/isSourceControlLicensed() { return false; }/isSourceControlLicensed() { return true; }/g' "$file"; \
-    done || true
+# Source control is disabled via environment variables to prevent connection errors
 
 # Patch quota limits to be unlimited (-1)
 RUN find /usr/local/lib/node_modules/n8n/dist -name "*license*" -type f | while read file; do \
@@ -219,11 +234,9 @@ ENV N8N_LICENSE_SERVER_URL_TRIAL=""
 ENV N8N_LICENSE_SERVER_URL_TRIAL_ACTIVATION=""
 ENV N8N_LICENSE_SERVER_URL_TRIAL_ACTIVATION_RETRY=""
 
-# Enable source control and configure for GitHub repository
-ENV N8N_SOURCE_CONTROL_DISABLED="false"
-ENV N8N_SOURCE_CONTROL_CONNECTED="true"
-ENV N8N_SOURCE_CONTROL_REPOSITORY_URL="https://github.com/sagebeme/n8n.git"
-ENV N8N_SOURCE_CONTROL_REPOSITORY_BRANCH="master"
+# Disable source control to prevent connection errors
+ENV N8N_SOURCE_CONTROL_DISABLED="true"
+ENV N8N_SOURCE_CONTROL_CONNECTED="false"
 
 # Switch back to node user
 USER node
