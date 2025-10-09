@@ -21,7 +21,16 @@ RUN sed -i 's/sharing: this\.license\.isSharingEnabled(),/sharing: true,/g' /usr
     sed -i 's/workerView: this\.license\.isWorkerViewLicensed(),/workerView: true,/g' /usr/local/lib/node_modules/n8n/dist/services/frontend.service.js && \
     sed -i 's/advancedPermissions: this\.license\.isAdvancedPermissionsLicensed(),/advancedPermissions: true,/g' /usr/local/lib/node_modules/n8n/dist/services/frontend.service.js && \
     sed -i 's/apiKeyScopes: this\.license\.isApiKeyScopesEnabled(),/apiKeyScopes: true,/g' /usr/local/lib/node_modules/n8n/dist/services/frontend.service.js && \
-    sed -i 's/workflowDiffs: this\.licenseState\.isWorkflowDiffsLicensed(),/workflowDiffs: true,/g' /usr/local/lib/node_modules/n8n/dist/services/frontend.service.js
+    sed -i 's/workflowDiffs: this\.licenseState\.isWorkflowDiffsLicensed(),/workflowDiffs: true,/g' /usr/local/lib/node_modules/n8n/dist/services/frontend.service.js && \
+    sed -i 's/workflowHistory: this\.license\.isWorkflowHistoryLicensed(),/workflowHistory: true,/g' /usr/local/lib/node_modules/n8n/dist/services/frontend.service.js && \
+    sed -i 's/binaryDataS3: this\.license\.isBinaryDataS3Licensed(),/binaryDataS3: true,/g' /usr/local/lib/node_modules/n8n/dist/services/frontend.service.js && \
+    sed -i 's/multipleMainInstances: this\.license\.isMultipleMainInstancesLicensed(),/multipleMainInstances: true,/g' /usr/local/lib/node_modules/n8n/dist/services/frontend.service.js && \
+    sed -i 's/aiAssistant: this\.license\.isAiAssistantLicensed(),/aiAssistant: true,/g' /usr/local/lib/node_modules/n8n/dist/services/frontend.service.js && \
+    sed -i 's/askAi: this\.license\.isAskAiLicensed(),/askAi: true,/g' /usr/local/lib/node_modules/n8n/dist/services/frontend.service.js && \
+    sed -i 's/communityNodesCustomRegistry: this\.license\.isCommunityNodesCustomRegistryLicensed(),/communityNodesCustomRegistry: true,/g' /usr/local/lib/node_modules/n8n/dist/services/frontend.service.js && \
+    sed -i 's/aiCredits: this\.license\.isAiCreditsLicensed(),/aiCredits: true,/g' /usr/local/lib/node_modules/n8n/dist/services/frontend.service.js && \
+    sed -i 's/folders: this\.license\.isFoldersLicensed(),/folders: true,/g' /usr/local/lib/node_modules/n8n/dist/services/frontend.service.js && \
+    sed -i 's/customRoles: this\.license\.isCustomRolesLicensed(),/customRoles: true,/g' /usr/local/lib/node_modules/n8n/dist/services/frontend.service.js
 
 # Patch license.js to always return true for all license checks
 RUN sed -i 's/return this\.manager\?\.hasFeatureEnabled(feature) \?\? false;/return true;/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
@@ -40,7 +49,16 @@ RUN sed -i 's/return this\.manager\?\.hasFeatureEnabled(feature) \?\? false;/ret
     sed -i 's/isWorkerViewLicensed.*{.*return.*false.*}/isWorkerViewLicensed() { return true; }/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
     sed -i 's/isAdvancedPermissionsLicensed.*{.*return.*false.*}/isAdvancedPermissionsLicensed() { return true; }/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
     sed -i 's/isApiKeyScopesEnabled.*{.*return.*false.*}/isApiKeyScopesEnabled() { return true; }/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
-    sed -i 's/isWorkflowDiffsLicensed.*{.*return.*false.*}/isWorkflowDiffsLicensed() { return true; }/g' /usr/local/lib/node_modules/n8n/dist/license.js
+    sed -i 's/isWorkflowDiffsLicensed.*{.*return.*false.*}/isWorkflowDiffsLicensed() { return true; }/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
+    sed -i 's/isWorkflowHistoryLicensed.*{.*return.*false.*}/isWorkflowHistoryLicensed() { return true; }/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
+    sed -i 's/isBinaryDataS3Licensed.*{.*return.*false.*}/isBinaryDataS3Licensed() { return true; }/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
+    sed -i 's/isMultipleMainInstancesLicensed.*{.*return.*false.*}/isMultipleMainInstancesLicensed() { return true; }/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
+    sed -i 's/isAiAssistantLicensed.*{.*return.*false.*}/isAiAssistantLicensed() { return true; }/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
+    sed -i 's/isAskAiLicensed.*{.*return.*false.*}/isAskAiLicensed() { return true; }/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
+    sed -i 's/isCommunityNodesCustomRegistryLicensed.*{.*return.*false.*}/isCommunityNodesCustomRegistryLicensed() { return true; }/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
+    sed -i 's/isAiCreditsLicensed.*{.*return.*false.*}/isAiCreditsLicensed() { return true; }/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
+    sed -i 's/isFoldersLicensed.*{.*return.*false.*}/isFoldersLicensed() { return true; }/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
+    sed -i 's/isCustomRolesLicensed.*{.*return.*false.*}/isCustomRolesLicensed() { return true; }/g' /usr/local/lib/node_modules/n8n/dist/license.js
 
 # Patch insights dashboard license checks
 RUN find /usr/local/lib/node_modules/n8n/dist -name "*insights*" -type f | xargs grep -l "isInsightsDashboardLicensed\|isInsightsSummaryLicensed" | while read file; do \
@@ -62,11 +80,46 @@ RUN find /usr/local/lib/node_modules/n8n/dist -name "*workflow*" -type f | xargs
         sed -i 's/this\.licenseState\.isSharingLicensed()/true/g' "$file"; \
     done || true
 
+# Patch source control connection checks to prevent errors
+RUN find /usr/local/lib/node_modules/n8n/dist -name "*source-control*" -type f | while read file; do \
+        sed -i 's/isSourceControlConnected()/true/g' "$file"; \
+        sed -i 's/isSourceControlLicensedAndEnabled()/true/g' "$file"; \
+        sed -i 's/source_control_not_connected/source_control_connected/g' "$file"; \
+    done || true
+
+# Patch source control middleware to always allow access
+RUN find /usr/local/lib/node_modules/n8n/dist -name "*middleware*" -type f | xargs grep -l "source_control_not_connected" | while read file; do \
+        sed -i 's/source_control_not_connected/source_control_connected/g' "$file"; \
+        sed -i 's/res\.status(412)/res.status(200)/g' "$file"; \
+    done || true
+
+# Patch quota limits to be unlimited (-1)
+RUN find /usr/local/lib/node_modules/n8n/dist -name "*license*" -type f | while read file; do \
+        sed -i 's/getValue.*quota.*activeWorkflows.*/getValue(quota) { return -1; }/g' "$file"; \
+        sed -i 's/getValue.*quota.*maxVariables.*/getValue(quota) { return -1; }/g' "$file"; \
+        sed -i 's/getValue.*quota.*users.*/getValue(quota) { return -1; }/g' "$file"; \
+        sed -i 's/getValue.*quota.*workflowHistoryPrune.*/getValue(quota) { return -1; }/g' "$file"; \
+        sed -i 's/getValue.*quota.*maxTeamProjects.*/getValue(quota) { return -1; }/g' "$file"; \
+        sed -i 's/getValue.*quota.*aiCredits.*/getValue(quota) { return -1; }/g' "$file"; \
+        sed -i 's/getValue.*quota.*insights.*/getValue(quota) { return -1; }/g' "$file"; \
+        sed -i 's/getValue.*quota.*evaluations.*/getValue(quota) { return -1; }/g' "$file"; \
+    done || true
+
+# Patch plan name to show Enterprise
+RUN find /usr/local/lib/node_modules/n8n/dist -name "*license*" -type f | while read file; do \
+        sed -i 's/getPlanName.*{.*return.*}/getPlanName() { return "Enterprise"; }/g' "$file"; \
+        sed -i 's/getConsumerId.*{.*return.*}/getConsumerId() { return "enterprise-free"; }/g' "$file"; \
+    done || true
+
 # Set environment variables to disable license checks
 ENV N8N_LICENSE_SERVER_URL=""
 ENV N8N_LICENSE_SERVER_URL_TRIAL=""
 ENV N8N_LICENSE_SERVER_URL_TRIAL_ACTIVATION=""
 ENV N8N_LICENSE_SERVER_URL_TRIAL_ACTIVATION_RETRY=""
+
+# Disable source control connection checks to prevent errors
+ENV N8N_SOURCE_CONTROL_DISABLED="true"
+ENV N8N_SOURCE_CONTROL_CONNECTED="false"
 
 # Switch back to node user
 USER node
