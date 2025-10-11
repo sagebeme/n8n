@@ -44,7 +44,7 @@ RUN sed -i 's/sharing: this\.license\.isSharingEnabled(),/sharing: true,/g' /usr
     sed -i 's/insightsViewHourlyData: this\.license\.isInsightsViewHourlyDataLicensed(),/insightsViewHourlyData: true,/g' /usr/local/lib/node_modules/n8n/dist/services/frontend.service.js && \
     sed -i 's/auditLogs: false,/auditLogs: true,/g' /usr/local/lib/node_modules/n8n/dist/services/frontend.service.js && \
     sed -i 's/workflowDiffs: false,/workflowDiffs: true,/g' /usr/local/lib/node_modules/n8n/dist/services/frontend.service.js && \
-    sed -i 's/sourceControl: true,/sourceControl: true,\n\t\t\tauditLogs: true,\n\t\t\tworkflowDiffs: true,/g' /usr/local/lib/node_modules/n8n/dist/services/frontend.service.js
+    sed -i 's/sourceControl: true,/sourceControl: false,/g' /usr/local/lib/node_modules/n8n/dist/services/frontend.service.js
 
 # Comprehensive license.js patches - force all license checks to return true
 RUN sed -i 's/isLicensed(feature) {/isLicensed(feature) { return true; \/\/ /g' /usr/local/lib/node_modules/n8n/dist/license.js && \
@@ -250,6 +250,19 @@ ENV N8N_LICENSE_SERVER_URL_TRIAL_ACTIVATION_RETRY=""
 # Disable source control to prevent connection errors
 ENV N8N_SOURCE_CONTROL_DISABLED="true"
 ENV N8N_SOURCE_CONTROL_CONNECTED="false"
+
+# Fix Express trust proxy configuration for Render deployment
+ENV N8N_TRUST_PROXY="true"
+
+# Disable task runners to prevent 403 errors
+ENV N8N_RUNNERS_ENABLED="false"
+
+# Fix deprecation warnings and SQLite warnings
+ENV NODE_NO_WARNINGS="1"
+ENV DB_SQLITE_POOL_SIZE="10"
+ENV N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS="false"
+ENV N8N_BLOCK_ENV_ACCESS_IN_NODE="false"
+ENV N8N_GIT_NODE_DISABLE_BARE_REPOS="true"
 
 # Switch back to node user
 USER node

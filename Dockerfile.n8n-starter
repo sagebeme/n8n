@@ -71,6 +71,19 @@ ENV N8N_SOURCE_CONTROL_CONNECTED="false"
 ENV N8N_EXECUTIONS_MODE="regular"
 ENV N8N_CONCURRENT_EXECUTIONS="5"
 
+# Fix Express trust proxy configuration for Render deployment
+ENV N8N_TRUST_PROXY="true"
+
+# Disable task runners to prevent 403 errors
+ENV N8N_RUNNERS_ENABLED="false"
+
+# Fix deprecation warnings and SQLite warnings
+ENV NODE_NO_WARNINGS="1"
+ENV DB_SQLITE_POOL_SIZE="10"
+ENV N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS="false"
+ENV N8N_BLOCK_ENV_ACCESS_IN_NODE="false"
+ENV N8N_GIT_NODE_DISABLE_BARE_REPOS="true"
+
 # Switch back to node user
 USER node
 
