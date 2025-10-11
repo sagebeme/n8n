@@ -208,6 +208,18 @@ RUN find /usr/local/lib/node_modules/n8n/dist -name "*controller*" -type f | xar
         sed -i 's/feat:sharing/feat:sharing-unlocked/g' "$file"; \
     done || true
 
+# Patch license environment to be production
+RUN find /usr/local/lib/node_modules/n8n/dist -name "*frontend*" -type f | while read file; do \
+        sed -i 's/environment: this\.globalConfig\.license\.tenantId === 1 \? '\''production'\'' : '\''staging'\''/environment: '\''production'\''/g' "$file"; \
+        sed -i 's/environment.*staging/environment: '\''production'\''/g' "$file"; \
+    done || true
+
+# Additional patch to force disable non-production banner at frontend level
+RUN find /usr/local/lib/node_modules/n8n/dist -name "*frontend*" -type f | xargs grep -l "showNonProdBanner" | while read file; do \
+        sed -i 's/showNonProdBanner: true/showNonProdBanner: false/g' "$file"; \
+        sed -i 's/showNonProdBanner.*true/showNonProdBanner: false/g' "$file"; \
+    done || true
+
 # Source control is disabled via environment variables to prevent connection errors
 
 # Patch quota limits to be unlimited (-1)
