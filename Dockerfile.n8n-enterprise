@@ -208,10 +208,11 @@ RUN find /usr/local/lib/node_modules/n8n/dist -name "*controller*" -type f | xar
         sed -i 's/feat:sharing/feat:sharing-unlocked/g' "$file"; \
     done || true
 
-# Patch license environment to be production
+# Patch license environment to be production (fix syntax error)
 RUN find /usr/local/lib/node_modules/n8n/dist -name "*frontend*" -type f | while read file; do \
-        sed -i 's/environment: this\.globalConfig\.license\.tenantId === 1 \? '\''production'\'' : '\''staging'\''/environment: '\''production'\''/g' "$file"; \
-        sed -i 's/environment.*staging/environment: '\''production'\''/g' "$file"; \
+        sed -i "s/environment: this\.globalConfig\.license\.tenantId === 1 \? 'production' : 'staging'/environment: 'production'/g" "$file"; \
+        sed -i "s/environment.*staging/environment: 'production'/g" "$file"; \
+        sed -i "s/environment: 'production''/environment: 'production'/g" "$file"; \
     done || true
 
 # Additional patch to force disable non-production banner at frontend level
