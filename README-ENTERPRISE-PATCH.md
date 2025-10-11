@@ -1,47 +1,72 @@
 # n8n Enterprise Features Unlock Patch
 
-This repository contains a patch that removes the subscription model from n8n and enables all enterprise features by default.
+This repository contains Docker images with different n8n plan configurations, removing the subscription model and providing various feature tiers.
 
-## 🚀 Features Unlocked
+## 📦 Available Docker Images
 
-### Core Enterprise Features
-- **Workflow Sharing** - Share workflows with team members
-- **Advanced Execution Filters** - Filter executions with advanced criteria
-- **Variables** - Use variables in workflows
-- **External Secrets** - External secret management
-- **Debug in Editor** - Debug workflows directly in the editor
-- **Worker View** - View and manage workers
-- **Advanced Permissions** - Fine-grained permission control
-- **API Key Scopes** - Scoped API key management
-- **Workflow Diffs** - Compare workflow versions
-- **Workflow History** - Track workflow execution history
-- **Folders** - Organize workflows in folders
-- **Custom Roles** - Create custom user roles
+### 🆓 Starter Plan - `sagebeme/n8n-starter:latest`
+**Perfect for getting started and seeing the power of n8n**
+- ✅ 1 shared project
+- ✅ 5 concurrent executions  
+- ✅ Unlimited users
+- ✅ Forum support
+- ❌ No advanced features
+- ❌ No workflow sharing
+- ❌ No variables
+- ❌ No workflow history
 
-### AI & Automation Features
-- **AI Assistant** - AI-powered workflow assistance
-- **Ask AI** - AI-powered workflow generation
-- **AI Credits** - Unlimited AI usage
-- **Community Nodes Custom Registry** - Custom node registry
+### 💼 Pro Plan - `sagebeme/n8n-pro:latest`
+**For solo builders and small teams running workflows in production**
+- ✅ Everything in Starter plan, plus:
+- ✅ 3 shared projects
+- ✅ 20 concurrent executions
+- ✅ 7 days of insights
+- ✅ Admin roles
+- ✅ Global variables
+- ✅ Workflow history
+- ✅ Execution search
+- ✅ Workflow sharing
+- ✅ Advanced execution filters
+- ✅ Debug in editor
+- ✅ Workflow diffs
+- ❌ No SSO/SAML/LDAP
+- ❌ No source control
 
-### Analytics & Insights
-- **Insights Dashboard** - Detailed workflow execution analytics
-- **Insights Summary** - Workflow performance summaries
-- **Insights Hourly Data** - Granular execution data
+### 🏢 Business Plan - `sagebeme/n8n-business:latest`
+**For companies with < 100 employees needing collaboration and scale**
+- ✅ Everything in Pro plan, plus:
+- ✅ 6 shared projects
+- ✅ SSO, SAML and LDAP
+- ✅ 30 days of insights
+- ✅ Different environments
+- ✅ Scaling options
+- ✅ Version control using Git
+- ✅ Advanced permissions
+- ✅ API key scopes
+- ✅ Folders
+- ✅ Custom roles
+- ✅ Binary data S3
+- ✅ Multiple main instances
+- ❌ No AI features
+- ❌ No audit logs
 
-### Authentication & Security
-- **LDAP/SAML/OIDC** - Enterprise authentication
-- **MFA Enforcement** - Multi-factor authentication enforcement
-- **Log Streaming** - Real-time log streaming
-- **Audit Logs** - Comprehensive audit trail and logging
-
-### Infrastructure Features
-- **Binary Data S3** - S3 storage for binary data
-- **Multiple Main Instances** - Scale across multiple instances
-- **Project Roles** - Admin, Editor, Viewer role management
-
-### Note on Source Control
-- **Source Control** - Disabled to prevent connection errors (can be enabled via environment variables if needed)
+### 🚀 Enterprise Plan - `sagebeme/n8n-enterprise:latest`
+**For organisations with strict compliance and governance needs**
+- ✅ Everything in Business plan, plus:
+- ✅ Unlimited shared projects
+- ✅ 200+ concurrent executions
+- ✅ 365 days of insights
+- ✅ External secret store integration
+- ✅ Log streaming
+- ✅ Extended data retention
+- ✅ Dedicated support with SLA
+- ✅ Invoice billing
+- ✅ AI Assistant
+- ✅ Ask AI
+- ✅ AI Credits
+- ✅ Community Nodes Custom Registry
+- ✅ Audit Logs
+- ✅ All enterprise features unlocked
 
 ## 📋 Prerequisites
 
@@ -49,13 +74,71 @@ This repository contains a patch that removes the subscription model from n8n an
 - PostgreSQL database (local or remote)
 - Basic knowledge of Docker and environment variables
 
-## 🛠️ Quick Start
+## 🚀 Quick Start
 
-### Option 1: Using Docker (Recommended)
+### Using Docker Run (Recommended)
+
+Choose your plan and run the appropriate Docker image:
+
+#### 🆓 Starter Plan
+```bash
+docker run --name n8n-starter \
+  -e DB_TYPE=sqlite \
+  -p 5678:5678 \
+  -d sagebeme/n8n-starter:latest
+```
+
+#### 💼 Pro Plan
+```bash
+docker run --name n8n-pro \
+  -e DB_TYPE=sqlite \
+  -p 5678:5678 \
+  -d sagebeme/n8n-pro:latest
+```
+
+#### 🏢 Business Plan
+```bash
+docker run --name n8n-business \
+  -e DB_TYPE=sqlite \
+  -p 5678:5678 \
+  -d sagebeme/n8n-business:latest
+```
+
+#### 🚀 Enterprise Plan
+```bash
+docker run --name n8n-enterprise \
+  -e DB_TYPE=sqlite \
+  -p 5678:5678 \
+  -d sagebeme/n8n-enterprise:latest
+```
+
+### Using PostgreSQL Database
+
+For production use, replace `DB_TYPE=sqlite` with PostgreSQL configuration:
+
+```bash
+docker run --name n8n-[PLAN] \
+  -e DB_TYPE=postgresdb \
+  -e DB_POSTGRESDB_HOST=your-postgres-host \
+  -e DB_POSTGRESDB_PORT=5432 \
+  -e DB_POSTGRESDB_DATABASE=n8n \
+  -e DB_POSTGRESDB_USER=n8n \
+  -e DB_POSTGRESDB_PASSWORD=your-password \
+  -p 5678:5678 \
+  -d sagebeme/n8n-[PLAN]:latest
+```
+
+Replace `[PLAN]` with: `starter`, `pro`, `business`, or `enterprise`
+
+### Access n8n
+- Open your browser and go to `http://localhost:5678`
+- Complete the initial setup
+
+### Option 2: Using Docker Compose
 
 1. **Clone this repository:**
    ```bash
-   git clone <your-repo-url>
+   git clone https://github.com/sagebeme/n8n.git
    cd n8n
    ```
 
@@ -70,10 +153,6 @@ This repository contains a patch that removes the subscription model from n8n an
      -e POSTGRES_PASSWORD=your_password \
      postgres:17
    ```
-
-   **For existing PostgreSQL:**
-   - Ensure your database is accessible
-   - Note down connection details
 
 3. **Create environment file:**
    ```bash

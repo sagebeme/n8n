@@ -1,0 +1,82 @@
+FROM n8nio/n8n:latest
+
+USER root
+
+RUN apk add --no-cache sed grep
+
+# Apply Pro plan patches - Advanced features enabled
+RUN sed -i 's/sharing: this\.license\.isSharingEnabled(),/sharing: true,/g' /usr/local/lib/node_modules/n8n/dist/services/frontend.service.js && \
+    sed -i 's/logStreaming: this\.license\.isLogStreamingEnabled(),/logStreaming: false,/g' /usr/local/lib/node_modules/n8n/dist/services/frontend.service.js && \
+    sed -i 's/ldap: this\.license\.isLdapEnabled(),/ldap: false,/g' /usr/local/lib/node_modules/n8n/dist/services/frontend.service.js && \
+    sed -i 's/saml: this\.license\.isSamlEnabled(),/saml: false,/g' /usr/local/lib/node_modules/n8n/dist/services/frontend.service.js && \
+    sed -i 's/oidc: this\.licenseState\.isOidcLicensed(),/oidc: false,/g' /usr/local/lib/node_modules/n8n/dist/services/frontend.service.js && \
+    sed -i 's/mfaEnforcement: this\.licenseState\.isMFAEnforcementLicensed(),/mfaEnforcement: false,/g' /usr/local/lib/node_modules/n8n/dist/services/frontend.service.js && \
+    sed -i 's/advancedExecutionFilters: this\.license\.isAdvancedExecutionFiltersEnabled(),/advancedExecutionFilters: true,/g' /usr/local/lib/node_modules/n8n/dist/services/frontend.service.js && \
+    sed -i 's/variables: this\.license\.isVariablesEnabled(),/variables: true,/g' /usr/local/lib/node_modules/n8n/dist/services/frontend.service.js && \
+    sed -i 's/sourceControl: this\.license\.isSourceControlLicensed(),/sourceControl: false,/g' /usr/local/lib/node_modules/n8n/dist/services/frontend.service.js && \
+    sed -i 's/auditLogs: this\.license\.isAuditLogsLicensed(),/auditLogs: false,/g' /usr/local/lib/node_modules/n8n/dist/services/frontend.service.js && \
+    sed -i 's/externalSecrets: this\.license\.isExternalSecretsEnabled(),/externalSecrets: false,/g' /usr/local/lib/node_modules/n8n/dist/services/frontend.service.js && \
+    sed -i 's/debugInEditor: this\.license\.isDebugInEditorLicensed(),/debugInEditor: true,/g' /usr/local/lib/node_modules/n8n/dist/services/frontend.service.js && \
+    sed -i 's/workerView: this\.license\.isWorkerViewLicensed(),/workerView: false,/g' /usr/local/lib/node_modules/n8n/dist/services/frontend.service.js && \
+    sed -i 's/advancedPermissions: this\.license\.isAdvancedPermissionsLicensed(),/advancedPermissions: false,/g' /usr/local/lib/node_modules/n8n/dist/services/frontend.service.js && \
+    sed -i 's/apiKeyScopes: this\.license\.isApiKeyScopesEnabled(),/apiKeyScopes: false,/g' /usr/local/lib/node_modules/n8n/dist/services/frontend.service.js && \
+    sed -i 's/workflowDiffs: this\.licenseState\.isWorkflowDiffsLicensed(),/workflowDiffs: true,/g' /usr/local/lib/node_modules/n8n/dist/services/frontend.service.js && \
+    sed -i 's/apiDisabled: this\.license\.isAPIDisabled(),/apiDisabled: false,/g' /usr/local/lib/node_modules/n8n/dist/services/frontend.service.js && \
+    sed -i 's/showNonProdBanner: this\.license\.isShowNonProdBannerLicensed(),/showNonProdBanner: false,/g' /usr/local/lib/node_modules/n8n/dist/services/frontend.service.js && \
+    sed -i 's/workflowHistory: this\.license\.isWorkflowHistoryLicensed(),/workflowHistory: true,/g' /usr/local/lib/node_modules/n8n/dist/services/frontend.service.js && \
+    sed -i 's/binaryDataS3: this\.license\.isBinaryDataS3Licensed(),/binaryDataS3: false,/g' /usr/local/lib/node_modules/n8n/dist/services/frontend.service.js && \
+    sed -i 's/multipleMainInstances: this\.license\.isMultipleMainInstancesLicensed(),/multipleMainInstances: false,/g' /usr/local/lib/node_modules/n8n/dist/services/frontend.service.js && \
+    sed -i 's/aiAssistant: this\.license\.isAiAssistantLicensed(),/aiAssistant: false,/g' /usr/local/lib/node_modules/n8n/dist/services/frontend.service.js && \
+    sed -i 's/askAi: this\.license\.isAskAiLicensed(),/askAi: false,/g' /usr/local/lib/node_modules/n8n/dist/services/frontend.service.js && \
+    sed -i 's/communityNodesCustomRegistry: this\.license\.isCommunityNodesCustomRegistryLicensed(),/communityNodesCustomRegistry: false,/g' /usr/local/lib/node_modules/n8n/dist/services/frontend.service.js && \
+    sed -i 's/aiCredits: this\.license\.isAiCreditsLicensed(),/aiCredits: false,/g' /usr/local/lib/node_modules/n8n/dist/services/frontend.service.js && \
+    sed -i 's/folders: this\.license\.isFoldersLicensed(),/folders: false,/g' /usr/local/lib/node_modules/n8n/dist/services/frontend.service.js && \
+    sed -i 's/customRoles: this\.license\.isCustomRolesLicensed(),/customRoles: false,/g' /usr/local/lib/node_modules/n8n/dist/services/frontend.service.js && \
+    sed -i 's/projectRoleAdmin: this\.license\.isProjectRoleAdminLicensed(),/projectRoleAdmin: true,/g' /usr/local/lib/node_modules/n8n/dist/services/frontend.service.js && \
+    sed -i 's/projectRoleEditor: this\.license\.isProjectRoleEditorLicensed(),/projectRoleEditor: true,/g' /usr/local/lib/node_modules/n8n/dist/services/frontend.service.js && \
+    sed -i 's/projectRoleViewer: this\.license\.isProjectRoleViewerLicensed(),/projectRoleViewer: true,/g' /usr/local/lib/node_modules/n8n/dist/services/frontend.service.js && \
+    sed -i 's/insightsViewSummary: this\.license\.isInsightsViewSummaryLicensed(),/insightsViewSummary: true,/g' /usr/local/lib/node_modules/n8n/dist/services/frontend.service.js && \
+    sed -i 's/insightsViewDashboard: this\.license\.isInsightsViewDashboardLicensed(),/insightsViewDashboard: false,/g' /usr/local/lib/node_modules/n8n/dist/services/frontend.service.js && \
+    sed -i 's/insightsViewHourlyData: this\.license\.isInsightsViewHourlyDataLicensed(),/insightsViewHourlyData: false,/g' /usr/local/lib/node_modules/n8n/dist/services/frontend.service.js
+
+# Set Pro plan quotas (10k executions, 20 concurrent, 3 projects, 7 days insights)
+RUN find /usr/local/lib/node_modules/n8n/dist -name "*license*" -type f | while read file; do \
+        sed -i 's/getValue.*quota.*activeWorkflows.*/getValue(quota) { return 3; }/g' "$file"; \
+        sed -i 's/getValue.*quota.*maxVariables.*/getValue(quota) { return 10; }/g' "$file"; \
+        sed -i 's/getValue.*quota.*users.*/getValue(quota) { return -1; }/g' "$file"; \
+        sed -i 's/getValue.*quota.*workflowHistoryPrune.*/getValue(quota) { return 7; }/g' "$file"; \
+        sed -i 's/getValue.*quota.*maxTeamProjects.*/getValue(quota) { return 3; }/g' "$file"; \
+        sed -i 's/getValue.*quota.*aiCredits.*/getValue(quota) { return 0; }/g' "$file"; \
+        sed -i 's/getValue.*quota.*insights.*/getValue(quota) { return 7; }/g' "$file"; \
+        sed -i 's/getValue.*quota.*evaluations.*/getValue(quota) { return 0; }/g' "$file"; \
+    done || true
+
+# Set plan name to Pro
+RUN find /usr/local/lib/node_modules/n8n/dist -name "*license*" -type f | while read file; do \
+        sed -i 's/getPlanName.*{.*return.*}/getPlanName() { return "Pro"; }/g' "$file"; \
+        sed -i 's/getConsumerId.*{.*return.*}/getConsumerId() { return "pro-free"; }/g' "$file"; \
+    done || true
+
+# Set environment variables to disable license checks
+ENV N8N_LICENSE_SERVER_URL=""
+ENV N8N_LICENSE_SERVER_URL_TRIAL=""
+ENV N8N_LICENSE_SERVER_URL_TRIAL_ACTIVATION=""
+ENV N8N_LICENSE_SERVER_URL_TRIAL_ACTIVATION_RETRY=""
+
+# Disable source control to prevent connection errors
+ENV N8N_SOURCE_CONTROL_DISABLED="true"
+ENV N8N_SOURCE_CONTROL_CONNECTED="false"
+
+# Set execution limits for Pro plan
+ENV N8N_EXECUTIONS_MODE="regular"
+ENV N8N_CONCURRENT_EXECUTIONS="20"
+
+# Switch back to node user
+USER node
+
+# Expose port
+EXPOSE 5678
+
+# Use the exact same configuration as the base image
+ENTRYPOINT ["tini", "--", "/docker-entrypoint.sh"]
+CMD []
