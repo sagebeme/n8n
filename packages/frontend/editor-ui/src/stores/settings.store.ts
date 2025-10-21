@@ -17,7 +17,6 @@ import type { IDataObject, WorkflowSettings } from 'n8n-workflow';
 import { defineStore } from 'pinia';
 import { useRootStore } from '@n8n/stores/useRootStore';
 import { makeRestApiRequest } from '@n8n/rest-api-client';
-import { useLocalStorage } from '@vueuse/core';
 
 export const useSettingsStore = defineStore(STORES.SETTINGS, () => {
 	const initialized = ref(false);
@@ -86,9 +85,19 @@ export const useSettingsStore = defineStore(STORES.SETTINGS, () => {
 
 	const publicApiPath = computed(() => api.value.path);
 
-	const isAiAssistantEnabled = computed(() => settings.value.aiAssistant?.enabled);
+	const isAiAssistantEnabled = computed(
+		() => settings.value.aiAssistant?.enabled && settings.value.aiAssistant?.setup,
+	);
 
 	const isAskAiEnabled = computed(() => settings.value.askAi?.enabled);
+
+	const isAiBuilderEnabled = computed(
+		() => settings.value.aiBuilder?.enabled && settings.value.aiBuilder?.setup,
+	);
+
+	const isAiAssistantOrBuilderEnabled = computed(
+		() => isAiAssistantEnabled.value || isAiBuilderEnabled.value,
+	);
 
 	const showSetupPage = computed(() => userManagement.value.showSetupOnFirstLoad);
 
@@ -101,23 +110,6 @@ export const useSettingsStore = defineStore(STORES.SETTINGS, () => {
 	const isModuleActive = (moduleName: string) => {
 		return activeModules.value?.includes(moduleName);
 	};
-
-	const partialExecutionVersion = computed<1 | 2>(() => {
-		const defaultVersion = settings.value.partialExecution?.version ?? 1;
-		// -1 means we pick the defaultVersion
-		//  1 is the old flow
-		//  2 is the new flow
-		const userVersion = useLocalStorage('PartialExecution.version', -1).value;
-		const version = userVersion === -1 ? defaultVersion : userVersion;
-
-		// For backwards compatibility, e.g. if the user has 0 in their local
-		// storage, which used to be allowed, but not anymore.
-		if (![1, 2].includes(version)) {
-			return 1;
-		}
-
-		return version as 1 | 2;
-	});
 
 	const isAiCreditsEnabled = computed(() => settings.value.aiCredits?.enabled);
 
@@ -146,6 +138,12 @@ export const useSettingsStore = defineStore(STORES.SETTINGS, () => {
 	const isFoldersFeatureEnabled = computed(() => folders.value.enabled);
 
 	const isDataTableFeatureEnabled = computed(() => isModuleActive('data-table'));
+
+	const isChatFeatureEnabled = computed(() => isModuleActive('chat-hub'));
+
+	const isCustomRolesFeatureEnabled = computed(
+		() => settings.value.enterprise?.customRoles ?? false,
+	);
 
 	const areTagsEnabled = computed(() =>
 		settings.value.workflowTagsDisabled !== undefined ? !settings.value.workflowTagsDisabled : true,
@@ -353,6 +351,7 @@ export const useSettingsStore = defineStore(STORES.SETTINGS, () => {
 		isMfaFeatureEnabled,
 		isFoldersFeatureEnabled,
 		isAiAssistantEnabled,
+		isCustomRolesFeatureEnabled,
 		areTagsEnabled,
 		isHiringBannerEnabled,
 		isTemplatesEnabled,
@@ -373,9 +372,10 @@ export const useSettingsStore = defineStore(STORES.SETTINGS, () => {
 		saveDataProgressExecution,
 		isCommunityPlan,
 		isAskAiEnabled,
+		isAiBuilderEnabled,
+		isAiAssistantOrBuilderEnabled,
 		isAiCreditsEnabled,
 		aiCreditsQuota,
-		partialExecutionVersion,
 		reset,
 		getTimezones,
 		testTemplatesEndpoint,
@@ -391,5 +391,6 @@ export const useSettingsStore = defineStore(STORES.SETTINGS, () => {
 		activeModules,
 		isModuleActive,
 		isDataTableFeatureEnabled,
+		isChatFeatureEnabled,
 	};
 });

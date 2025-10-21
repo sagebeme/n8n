@@ -1,11 +1,11 @@
 import { useTelemetry } from '@/composables/useTelemetry';
 import { useToast } from '@/composables/useToast';
-import { READY_TO_RUN_V2_EXPERIMENT, VIEWS } from '@/constants';
+import { READY_TO_RUN_V2_PART2_EXPERIMENT, VIEWS } from '@/constants';
 import { useCloudPlanStore } from '@/stores/cloudPlan.store';
-import { useCredentialsStore } from '@/stores/credentials.store';
+import { useCredentialsStore } from '@/features/credentials/credentials.store';
 import { usePostHog } from '@/stores/posthog.store';
 import { useSettingsStore } from '@/stores/settings.store';
-import { useUsersStore } from '@/stores/users.store';
+import { useUsersStore } from '@/features/settings/users/users.store';
 import { useWorkflowsStore } from '@/stores/workflows.store';
 import { useI18n } from '@n8n/i18n';
 import { STORES } from '@n8n/stores';
@@ -13,10 +13,10 @@ import { useLocalStorage } from '@vueuse/core';
 import { OPEN_AI_API_CREDENTIAL_TYPE, deepCopy } from 'n8n-workflow';
 import type { WorkflowDataCreate } from '@n8n/rest-api-client';
 import { defineStore } from 'pinia';
-import { computed, ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { useRouter, type RouteLocationNormalized } from 'vue-router';
-import { READY_TO_RUN_WORKFLOW_V1 } from '../workflows/ai-workflow';
-import { READY_TO_RUN_WORKFLOW_V2 } from '../workflows/ai-workflow-v2';
+import { READY_TO_RUN_WORKFLOW_V3 } from '../workflows/ai-workflow-v3';
+import { READY_TO_RUN_WORKFLOW_V4 } from '../workflows/ai-workflow-v4';
 import { useEmptyStateDetection } from '../composables/useEmptyStateDetection';
 
 const LOCAL_STORAGE_CREDENTIAL_KEY = 'N8N_READY_TO_RUN_V2_OPENAI_CREDENTIAL_ID';
@@ -35,12 +35,26 @@ export const useReadyToRunWorkflowsV2Store = defineStore(
 		const cloudPlanStore = useCloudPlanStore();
 		const workflowsStore = useWorkflowsStore();
 
-		const isFeatureEnabled = computed(() => {
-			const variant = posthogStore.getVariant(READY_TO_RUN_V2_EXPERIMENT.name);
+		const hasChosenHubSpot = computed(() => {
+			const selectedApps = cloudPlanStore.selectedApps;
+
+			if (!selectedApps?.length) {
+				return false;
+			}
+
 			return (
-				(variant === READY_TO_RUN_V2_EXPERIMENT.variant1 ||
-					variant === READY_TO_RUN_V2_EXPERIMENT.variant2) &&
-				cloudPlanStore.userIsTrialing
+				selectedApps.includes('n8n-nodes-base.hubspot') ||
+				selectedApps.includes('n8n-nodes-base.hubspotTrigger')
+			);
+		});
+
+		const isFeatureEnabled = computed(() => {
+			const variant = posthogStore.getVariant(READY_TO_RUN_V2_PART2_EXPERIMENT.name);
+			return (
+				(variant === READY_TO_RUN_V2_PART2_EXPERIMENT.variant3 ||
+					variant === READY_TO_RUN_V2_PART2_EXPERIMENT.variant4) &&
+				cloudPlanStore.userIsTrialing &&
+				!hasChosenHubSpot.value
 			);
 		});
 
@@ -68,7 +82,7 @@ export const useReadyToRunWorkflowsV2Store = defineStore(
 		});
 
 		const getCurrentVariant = () => {
-			return posthogStore.getVariant(READY_TO_RUN_V2_EXPERIMENT.name);
+			return posthogStore.getVariant(READY_TO_RUN_V2_PART2_EXPERIMENT.name);
 		};
 
 		const trackExecuteAiWorkflow = (status: string) => {
@@ -86,15 +100,35 @@ export const useReadyToRunWorkflowsV2Store = defineStore(
 			});
 		};
 
+		const trackExperimentParticipation = async () => {
+			if (settingsStore.isCloudDeployment && !cloudPlanStore.state.initialized) {
+				try {
+					await cloudPlanStore.initialize();
+				} catch (error) {
+					console.warn('Could not load cloud plan data for experiment tracking:', error);
+					return;
+				}
+			}
+
+			// Skip tracking if user has selected HubSpot nodes
+			if (hasChosenHubSpot.value) {
+				return;
+			}
+
+			const variant = posthogStore.getVariant(READY_TO_RUN_V2_PART2_EXPERIMENT.name);
+			if (variant) {
+				telemetry.track('User is part of experiment', {
+					name: READY_TO_RUN_V2_PART2_EXPERIMENT.name,
+					variant,
+				});
+			}
+		};
+
 		const claimFreeAiCredits = async (projectId?: string) => {
 			claimingCredits.value = true;
 
 			try {
 				const credential = await credentialsStore.claimFreeAiCredits(projectId);
-
-				if (usersStore?.currentUser?.settings) {
-					usersStore.currentUser.settings.userClaimedAiCredits = true;
-				}
 
 				claimedCredentialIdRef.value = credential.id;
 
@@ -120,9 +154,9 @@ export const useReadyToRunWorkflowsV2Store = defineStore(
 			});
 
 			const workflowTemplate =
-				variant === READY_TO_RUN_V2_EXPERIMENT.variant2
-					? READY_TO_RUN_WORKFLOW_V2
-					: READY_TO_RUN_WORKFLOW_V1;
+				variant === READY_TO_RUN_V2_PART2_EXPERIMENT.variant3
+					? READY_TO_RUN_WORKFLOW_V3
+					: READY_TO_RUN_WORKFLOW_V4;
 
 			try {
 				let workflowToCreate: WorkflowDataCreate = {
@@ -165,6 +199,10 @@ export const useReadyToRunWorkflowsV2Store = defineStore(
 		) => {
 			await claimFreeAiCredits(projectId);
 			await createAndOpenAiWorkflow(source, parentFolderId);
+
+			if (usersStore?.currentUser?.settings) {
+				usersStore.currentUser.settings.userClaimedAiCredits = true;
+			}
 		};
 
 		const getCardVisibility = (
@@ -200,6 +238,18 @@ export const useReadyToRunWorkflowsV2Store = defineStore(
 		const getSimplifiedLayoutVisibility = (route: RouteLocationNormalized, loading: boolean) => {
 			return shouldShowSimplifiedLayout(route, isFeatureEnabled.value, loading);
 		};
+
+		let hasTrackedExperiment = false;
+		watch(
+			isFeatureEnabled,
+			(enabled) => {
+				if (enabled && !hasTrackedExperiment) {
+					hasTrackedExperiment = true;
+					void trackExperimentParticipation();
+				}
+			},
+			{ immediate: true },
+		);
 
 		return {
 			isFeatureEnabled,

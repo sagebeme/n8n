@@ -2,18 +2,30 @@ import { createTestingPinia } from '@pinia/testing';
 import { setActivePinia } from 'pinia';
 import { nodeExecuteAfter } from './nodeExecuteAfter';
 import { useWorkflowsStore } from '@/stores/workflows.store';
-import { useAssistantStore } from '@/stores/assistant.store';
+import { useAssistantStore } from '@/features/ai/assistant/assistant.store';
 import { mockedStore } from '@/__tests__/utils';
 import type { NodeExecuteAfter } from '@n8n/api-types/push/execution';
 import { TRIMMED_TASK_DATA_CONNECTIONS_KEY } from 'n8n-workflow';
+import type { WorkflowState } from '@/composables/useWorkflowState';
+import { mock } from 'vitest-mock-extended';
+import type { Mocked } from 'vitest';
 
 describe('nodeExecuteAfter', () => {
+	let mockOptions: { workflowState: Mocked<WorkflowState> };
 	beforeEach(() => {
 		const pinia = createTestingPinia({
 			stubActions: true,
 		});
 
 		setActivePinia(pinia);
+
+		mockOptions = {
+			workflowState: mock<WorkflowState>({
+				executingNode: {
+					removeExecutingNode: vi.fn(),
+				},
+			}),
+		};
 	});
 
 	it('should update node execution data with placeholder and remove executing node', async () => {
@@ -35,16 +47,18 @@ describe('nodeExecuteAfter', () => {
 			},
 		};
 
-		await nodeExecuteAfter(event);
+		await nodeExecuteAfter(event, mockOptions);
 
-		expect(workflowsStore.updateNodeExecutionData).toHaveBeenCalledTimes(1);
-		expect(workflowsStore.removeExecutingNode).toHaveBeenCalledTimes(1);
-		expect(workflowsStore.removeExecutingNode).toHaveBeenCalledWith('Test Node');
+		expect(workflowsStore.updateNodeExecutionStatus).toHaveBeenCalledTimes(1);
+		expect(mockOptions.workflowState.executingNode.removeExecutingNode).toHaveBeenCalledTimes(1);
+		expect(mockOptions.workflowState.executingNode.removeExecutingNode).toHaveBeenCalledWith(
+			'Test Node',
+		);
 		expect(assistantStore.onNodeExecution).toHaveBeenCalledTimes(1);
 		expect(assistantStore.onNodeExecution).toHaveBeenCalledWith(event.data);
 
 		// Verify the placeholder data structure
-		const updateCall = workflowsStore.updateNodeExecutionData.mock.calls[0][0];
+		const updateCall = workflowsStore.updateNodeExecutionStatus.mock.calls[0][0];
 		expect(updateCall.data.data).toEqual({
 			main: [
 				Array.from({ length: 2 }).fill({ json: { [TRIMMED_TASK_DATA_CONNECTIONS_KEY]: true } }),
@@ -75,9 +89,9 @@ describe('nodeExecuteAfter', () => {
 			},
 		};
 
-		await nodeExecuteAfter(event);
+		await nodeExecuteAfter(event, mockOptions);
 
-		const updateCall = workflowsStore.updateNodeExecutionData.mock.calls[0][0];
+		const updateCall = workflowsStore.updateNodeExecutionStatus.mock.calls[0][0];
 		expect(updateCall.data.data).toEqual({
 			main: [
 				Array.from({ length: 3 }).fill({ json: { [TRIMMED_TASK_DATA_CONNECTIONS_KEY]: true } }),
@@ -110,9 +124,9 @@ describe('nodeExecuteAfter', () => {
 			},
 		};
 
-		await nodeExecuteAfter(event);
+		await nodeExecuteAfter(event, mockOptions);
 
-		const updateCall = workflowsStore.updateNodeExecutionData.mock.calls[0][0];
+		const updateCall = workflowsStore.updateNodeExecutionStatus.mock.calls[0][0];
 		expect(updateCall.data.data).toEqual({
 			main: [],
 		});
@@ -136,9 +150,9 @@ describe('nodeExecuteAfter', () => {
 			},
 		};
 
-		await nodeExecuteAfter(event);
+		await nodeExecuteAfter(event, mockOptions);
 
-		const updateCall = workflowsStore.updateNodeExecutionData.mock.calls[0][0];
+		const updateCall = workflowsStore.updateNodeExecutionStatus.mock.calls[0][0];
 		expect(updateCall.executionId).toBe('exec-1');
 		expect(updateCall.nodeName).toBe('Test Node');
 		expect(updateCall.data.executionTime).toBe(100);
@@ -176,9 +190,9 @@ describe('nodeExecuteAfter', () => {
 			},
 		};
 
-		await nodeExecuteAfter(event);
+		await nodeExecuteAfter(event, mockOptions);
 
-		const updateCall = workflowsStore.updateNodeExecutionData.mock.calls[0][0];
+		const updateCall = workflowsStore.updateNodeExecutionStatus.mock.calls[0][0];
 		// Should only contain main connection, invalid_connection should be filtered out
 		expect(updateCall.data.data).toEqual({
 			main: [

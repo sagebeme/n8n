@@ -1,11 +1,16 @@
 import { reactive } from 'vue';
-import { createTestWorkflowObject, defaultNodeDescriptions } from '@/__tests__/mocks';
+import {
+	createTestNode,
+	createTestWorkflowObject,
+	defaultNodeDescriptions,
+} from '@/__tests__/mocks';
 import { createComponentRenderer } from '@/__tests__/render';
 import { type MockedStore, mockedStore, SETTINGS_STORE_DEFAULT_STATE } from '@/__tests__/utils';
 import RunData from '@/components/RunData.vue';
 import { STORES } from '@n8n/stores';
 import { SET_NODE_TYPE } from '@/constants';
-import type { INodeUi, IRunDataDisplayMode, NodePanelType } from '@/Interface';
+import type { INodeUi, IRunDataDisplayMode } from '@/Interface';
+import type { NodePanelType } from '@/features/nodes/ndv/ndv.types';
 import { useWorkflowsStore } from '@/stores/workflows.store';
 import { createTestingPinia } from '@pinia/testing';
 import userEvent from '@testing-library/user-event';
@@ -34,7 +39,7 @@ vi.mock('vue-router', () => {
 	};
 });
 
-vi.mock('@/composables/useExecutionHelpers', () => ({
+vi.mock('@/features/execution/executions/composables/useExecutionHelpers', () => ({
 	useExecutionHelpers: () => ({
 		trackOpeningRelatedExecution,
 		resolveRelatedExecutionUrl,
@@ -827,9 +832,9 @@ describe('RunData', () => {
 
 		return createComponentRenderer(RunData, {
 			props: {
-				node: {
+				node: createTestNode({
 					name: 'Test Node',
-				},
+				}),
 				workflowObject: createTestWorkflowObject({
 					id: workflowId,
 					nodes: workflowNodes,
@@ -843,13 +848,13 @@ describe('RunData', () => {
 			},
 		})({
 			props: {
-				node: {
+				node: createTestNode({
 					id: '1',
 					name: 'Test Node',
 					type: SET_NODE_TYPE,
 					position: [0, 0],
 					parameters: {},
-				},
+				}),
 				nodes: [{ name: 'Test Node', indicies: [], depth: 1 }],
 				runIndex: 0,
 				paneType,

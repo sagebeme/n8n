@@ -1,8 +1,11 @@
 import { useCalloutHelpers } from '@/composables/useCalloutHelpers';
 import { updateCurrentUserSettings } from '@n8n/rest-api-client/api/users';
 import { createTestingPinia } from '@pinia/testing';
-import { PrebuiltAgentTemplates, SampleTemplates } from '@/utils/templates/workflowSamples';
-import { useNDVStore } from '@/stores/ndv.store';
+import {
+	PrebuiltAgentTemplates,
+	SampleTemplates,
+} from '@/features/workflows/templates/utils/workflowSamples';
+import { useNDVStore } from '@/features/nodes/ndv/ndv.store';
 import { mockedStore } from '@/__tests__/utils';
 import { NODE_CREATOR_OPEN_SOURCES, VIEWS } from '@/constants';
 import { useNodeCreatorStore } from '@/stores/nodeCreator.store';
@@ -37,7 +40,7 @@ vi.mock('@/stores/posthog.store', () => ({
 	}),
 }));
 
-vi.mock('@/stores/users.store', () => ({
+vi.mock('@/features/settings/users/users.store', () => ({
 	useUsersStore: () => ({
 		isCalloutDismissed: mocks.isCalloutDismissed,
 		setCalloutDismissed: mocks.setCalloutDismissed,
@@ -64,7 +67,7 @@ vi.mock('@n8n/rest-api-client/api/users', () => ({
 	updateCurrentUserSettings: vi.fn(),
 }));
 
-vi.mock('@/stores/projects.store', () => ({
+vi.mock('@/features/collaboration/projects/projects.store', () => ({
 	useProjectsStore: () => ({
 		currentProjectId: 'test-project-id',
 	}),

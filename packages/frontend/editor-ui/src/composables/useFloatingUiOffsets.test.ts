@@ -1,6 +1,6 @@
 import { defaultSettings } from '@/__tests__/defaults';
 import { useLogsStore } from '@/stores/logs.store';
-import { useNDVStore } from '@/stores/ndv.store';
+import { useNDVStore } from '@/features/nodes/ndv/ndv.store';
 import { useSettingsStore } from '@/stores/settings.store';
 import { useWorkflowsStore } from '@/stores/workflows.store';
 import { setActivePinia } from 'pinia';
@@ -49,7 +49,10 @@ describe(useFloatingUiOffsets, () => {
 			'should account for the height of AI assistant floating button in %s only when the button is displayed',
 			async (view) => {
 				currentRouteName = view;
-				useSettingsStore().setSettings({ ...defaultSettings, aiAssistant: { enabled: true } });
+				useSettingsStore().setSettings({
+					...defaultSettings,
+					aiAssistant: { enabled: true, setup: true },
+				});
 
 				const { toastBottomOffset } = useFloatingUiOffsets();
 
