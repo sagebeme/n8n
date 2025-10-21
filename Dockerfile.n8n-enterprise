@@ -1,10 +1,13 @@
-FROM n8nio/n8n:latest
+FROM n8nio/n8n:1.117.0
 
 # Switch to root to apply patches
 USER root
 
 # Install sed and grep for verification
 RUN apk add --no-cache sed grep
+
+# Set environment variables
+ENV NODE_ENV=production
 
 # Apply comprehensive enterprise features patch
 RUN sed -i 's/sharing: this\.license\.isSharingEnabled(),/sharing: true,/g' /usr/local/lib/node_modules/n8n/dist/services/frontend.service.js && \
@@ -255,12 +258,13 @@ ENV N8N_SOURCE_CONTROL_CONNECTED="false"
 # Fix Express trust proxy configuration for Render deployment
 ENV N8N_TRUST_PROXY="true"
 
-# Disable task runners to prevent 403 errors
+# v1.117.0: Task runner issues are fixed, but disable to reduce resource usage on free tier
 ENV N8N_RUNNERS_ENABLED="false"
 ENV N8N_RUNNERS_MODE="disabled"
-ENV N8N_RUNNERS_BROKER_PORT="0"
-ENV N8N_RUNNERS_AUTH_TOKEN=""
-ENV N8N_RUNNERS_GRANT_TOKEN=""
+# If you want to enable task runners on v1.117.0, set these:
+# ENV N8N_RUNNERS_ENABLED="true"
+# ENV N8N_RUNNERS_MODE="internal"
+# ENV N8N_RUNNERS_BROKER_PORT="5679"
 
 # Fix deprecation warnings and SQLite warnings
 ENV NODE_NO_WARNINGS="1"
