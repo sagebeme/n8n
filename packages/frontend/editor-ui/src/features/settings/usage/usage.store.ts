@@ -3,7 +3,7 @@ import { defineStore } from 'pinia';
 import type { UsageState } from '@n8n/api-types';
 import * as usageApi from '@n8n/rest-api-client/api/usage';
 import { useRootStore } from '@n8n/stores/useRootStore';
-import { useSettingsStore } from '@/stores/settings.store';
+import { useSettingsStore } from '@/app/stores/settings.store';
 
 export type UsageTelemetry = {
 	instance_id: string;
@@ -13,23 +13,23 @@ export type UsageTelemetry = {
 	quota: number;
 };
 
-const DEFAULT_PLAN_NAME = 'Enterprise';
+const DEFAULT_PLAN_NAME = 'Community';
 const DEFAULT_STATE: UsageState = {
-	loading: false, // No loading since subscription is disabled
+	loading: true,
 	data: {
 		usage: {
 			activeWorkflowTriggers: {
-				limit: -1, // Unlimited
+				limit: -1,
 				value: 0,
 				warningThreshold: 0.8,
 			},
 			workflowsHavingEvaluations: {
 				value: 0,
-				limit: -1, // Unlimited
+				limit: 0,
 			},
 		},
 		license: {
-			planId: 'enterprise-free',
+			planId: '',
 			planName: DEFAULT_PLAN_NAME,
 		},
 	},
@@ -75,28 +75,35 @@ export const useUsageStore = defineStore('usage', () => {
 	};
 
 	const getLicenseInfo = async () => {
-		// No-op since subscription is disabled - use default state
-		setData(DEFAULT_STATE.data);
+		const data = await usageApi.getLicense(rootStore.restApiContext);
+		setData(data);
 	};
 
-	const activateLicense = async (activationKey: string) => {
-		// No-op since subscription is disabled
-		console.log('License activation disabled - all features are free');
+	const activateLicense = async (activationKey: string, eulaUri?: string) => {
+		const data = await usageApi.activateLicenseKey(rootStore.restApiContext, {
+			activationKey,
+			eulaUri,
+		});
+		setData(data);
+		await settingsStore.getSettings();
+		await settingsStore.getModuleSettings();
 	};
 
 	const refreshLicenseManagementToken = async () => {
-		// No-op since subscription is disabled
+		try {
+			const data = await usageApi.renewLicense(rootStore.restApiContext);
+			setData(data);
+		} catch (error) {
+			await getLicenseInfo();
+		}
 	};
 
 	const requestEnterpriseLicenseTrial = async () => {
-		// No-op since subscription is disabled
-		console.log('License trials disabled - all features are free');
+		await usageApi.requestLicenseTrial(rootStore.restApiContext);
 	};
 
-	const registerCommunityEdition = async (email: string) => {
-		// No-op since subscription is disabled
-		console.log('Community edition registration disabled - all features are free');
-	};
+	const registerCommunityEdition = async (email: string) =>
+		await usageApi.registerCommunityEdition(rootStore.restApiContext, { email });
 
 	return {
 		setLoading,
