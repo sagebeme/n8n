@@ -1,4 +1,4 @@
-FROM n8nio/n8n:1.117.0
+FROM n8nio/n8n:1.120.0
 
 # Switch to root to apply patches
 USER root
@@ -51,71 +51,43 @@ RUN sed -i 's/sharing: this\.license\.isSharingEnabled(),/sharing: true,/g' /usr
     sed -i 's/sourceControl: true,/sourceControl: false,/g' /usr/local/lib/node_modules/n8n/dist/services/frontend.service.js
 
 # Comprehensive license.js patches - force all license checks to return true
-RUN sed -i 's/isLicensed(feature) {/isLicensed(feature) { return true; \/\/ /g' /usr/local/lib/node_modules/n8n/dist/license.js && \
-    sed -i 's/return this\.manager\?\.hasFeatureEnabled(feature) \?\? false;/return true;/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
-    sed -i '/isLicensed(feature) { return true; \/\/ /,/^    }/c\    isLicensed(feature) {\n        return true;\n    }' /usr/local/lib/node_modules/n8n/dist/license.js && \
-    sed -i 's/isSharingEnabled() {/isSharingEnabled() { return true; \/\/ /g' /usr/local/lib/node_modules/n8n/dist/license.js && \
-    sed -i 's/return this\.isLicensed(constants_1\.LICENSE_FEATURES\.SHARING);/return true;/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
-    sed -i 's/isLogStreamingEnabled() {/isLogStreamingEnabled() { return true; \/\/ /g' /usr/local/lib/node_modules/n8n/dist/license.js && \
-    sed -i 's/return this\.isLicensed(constants_1\.LICENSE_FEATURES\.LOG_STREAMING);/return true;/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
-    sed -i 's/isLdapEnabled() {/isLdapEnabled() { return true; \/\/ /g' /usr/local/lib/node_modules/n8n/dist/license.js && \
-    sed -i 's/return this\.isLicensed(constants_1\.LICENSE_FEATURES\.LDAP);/return true;/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
-    sed -i 's/isSamlEnabled() {/isSamlEnabled() { return true; \/\/ /g' /usr/local/lib/node_modules/n8n/dist/license.js && \
-    sed -i 's/return this\.isLicensed(constants_1\.LICENSE_FEATURES\.SAML);/return true;/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
-    sed -i 's/isOidcLicensed() {/isOidcLicensed() { return true; \/\/ /g' /usr/local/lib/node_modules/n8n/dist/license.js && \
-    sed -i 's/return this\.isLicensed(constants_1\.LICENSE_FEATURES\.OIDC);/return true;/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
-    sed -i 's/isMFAEnforcementLicensed() {/isMFAEnforcementLicensed() { return true; \/\/ /g' /usr/local/lib/node_modules/n8n/dist/license.js && \
-    sed -i 's/return this\.isLicensed(constants_1\.LICENSE_FEATURES\.MFA_ENFORCEMENT);/return true;/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
-    sed -i 's/isAdvancedExecutionFiltersEnabled() {/isAdvancedExecutionFiltersEnabled() { return true; \/\/ /g' /usr/local/lib/node_modules/n8n/dist/license.js && \
-    sed -i 's/return this\.isLicensed(constants_1\.LICENSE_FEATURES\.ADVANCED_EXECUTION_FILTERS);/return true;/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
-    sed -i 's/isVariablesEnabled() {/isVariablesEnabled() { return true; \/\/ /g' /usr/local/lib/node_modules/n8n/dist/license.js && \
-    sed -i 's/return this\.isLicensed(constants_1\.LICENSE_FEATURES\.VARIABLES);/return true;/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
-    sed -i 's/isSourceControlLicensed() {/isSourceControlLicensed() { return true; \/\/ /g' /usr/local/lib/node_modules/n8n/dist/license.js && \
-    sed -i 's/return this\.isLicensed(constants_1\.LICENSE_FEATURES\.SOURCE_CONTROL);/return true;/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
-    sed -i 's/isExternalSecretsEnabled() {/isExternalSecretsEnabled() { return true; \/\/ /g' /usr/local/lib/node_modules/n8n/dist/license.js && \
-    sed -i 's/return this\.isLicensed(constants_1\.LICENSE_FEATURES\.EXTERNAL_SECRETS);/return true;/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
-    sed -i 's/isDebugInEditorLicensed() {/isDebugInEditorLicensed() { return true; \/\/ /g' /usr/local/lib/node_modules/n8n/dist/license.js && \
-    sed -i 's/return this\.isLicensed(constants_1\.LICENSE_FEATURES\.DEBUG_IN_EDITOR);/return true;/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
-    sed -i 's/isWorkerViewLicensed() {/isWorkerViewLicensed() { return true; \/\/ /g' /usr/local/lib/node_modules/n8n/dist/license.js && \
-    sed -i 's/return this\.isLicensed(constants_1\.LICENSE_FEATURES\.WORKER_VIEW);/return true;/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
-    sed -i 's/isAdvancedPermissionsLicensed() {/isAdvancedPermissionsLicensed() { return true; \/\/ /g' /usr/local/lib/node_modules/n8n/dist/license.js && \
-    sed -i 's/return this\.isLicensed(constants_1\.LICENSE_FEATURES\.ADVANCED_PERMISSIONS);/return true;/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
-    sed -i 's/isApiKeyScopesEnabled() {/isApiKeyScopesEnabled() { return true; \/\/ /g' /usr/local/lib/node_modules/n8n/dist/license.js && \
-    sed -i 's/return this\.isLicensed(constants_1\.LICENSE_FEATURES\.API_KEY_SCOPES);/return true;/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
-    sed -i 's/isWorkflowHistoryLicensed() {/isWorkflowHistoryLicensed() { return true; \/\/ /g' /usr/local/lib/node_modules/n8n/dist/license.js && \
-    sed -i 's/return this\.isLicensed(constants_1\.LICENSE_FEATURES\.WORKFLOW_HISTORY);/return true;/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
-    sed -i 's/isBinaryDataS3Licensed() {/isBinaryDataS3Licensed() { return true; \/\/ /g' /usr/local/lib/node_modules/n8n/dist/license.js && \
-    sed -i 's/return this\.isLicensed(constants_1\.LICENSE_FEATURES\.BINARY_DATA_S3);/return true;/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
-    sed -i 's/isMultipleMainInstancesLicensed() {/isMultipleMainInstancesLicensed() { return true; \/\/ /g' /usr/local/lib/node_modules/n8n/dist/license.js && \
-    sed -i 's/return this\.isLicensed(constants_1\.LICENSE_FEATURES\.MULTIPLE_MAIN_INSTANCES);/return true;/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
-    sed -i 's/isAiAssistantLicensed() {/isAiAssistantLicensed() { return true; \/\/ /g' /usr/local/lib/node_modules/n8n/dist/license.js && \
-    sed -i 's/return this\.isLicensed(constants_1\.LICENSE_FEATURES\.AI_ASSISTANT);/return true;/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
-    sed -i 's/isAskAiLicensed() {/isAskAiLicensed() { return true; \/\/ /g' /usr/local/lib/node_modules/n8n/dist/license.js && \
-    sed -i 's/return this\.isLicensed(constants_1\.LICENSE_FEATURES\.ASK_AI);/return true;/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
-    sed -i 's/isCommunityNodesCustomRegistryLicensed() {/isCommunityNodesCustomRegistryLicensed() { return true; \/\/ /g' /usr/local/lib/node_modules/n8n/dist/license.js && \
-    sed -i 's/return this\.isLicensed(constants_1\.LICENSE_FEATURES\.COMMUNITY_NODES_CUSTOM_REGISTRY);/return true;/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
-    sed -i 's/isAiCreditsLicensed() {/isAiCreditsLicensed() { return true; \/\/ /g' /usr/local/lib/node_modules/n8n/dist/license.js && \
-    sed -i 's/return this\.isLicensed(constants_1\.LICENSE_FEATURES\.AI_CREDITS);/return true;/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
-    sed -i 's/isFoldersLicensed() {/isFoldersLicensed() { return true; \/\/ /g' /usr/local/lib/node_modules/n8n/dist/license.js && \
-    sed -i 's/return this\.isLicensed(constants_1\.LICENSE_FEATURES\.FOLDERS);/return true;/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
-    sed -i 's/isCustomRolesLicensed() {/isCustomRolesLicensed() { return true; \/\/ /g' /usr/local/lib/node_modules/n8n/dist/license.js && \
-    sed -i 's/return this\.isLicensed(constants_1\.LICENSE_FEATURES\.CUSTOM_ROLES);/return true;/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
-    sed -i 's/isAPIDisabled() {/isAPIDisabled() { return false; \/\/ /g' /usr/local/lib/node_modules/n8n/dist/license.js && \
-    sed -i 's/return this\.isLicensed(constants_1\.LICENSE_FEATURES\.API_DISABLED);/return false;/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
-    sed -i 's/isShowNonProdBannerLicensed() {/isShowNonProdBannerLicensed() { return false; \/\/ /g' /usr/local/lib/node_modules/n8n/dist/license.js && \
-    sed -i 's/return this\.isLicensed(constants_1\.LICENSE_FEATURES\.SHOW_NON_PROD_BANNER);/return false;/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
-    sed -i 's/isProjectRoleAdminLicensed() {/isProjectRoleAdminLicensed() { return true; \/\/ /g' /usr/local/lib/node_modules/n8n/dist/license.js && \
-    sed -i 's/return this\.isLicensed(constants_1\.LICENSE_FEATURES\.PROJECT_ROLE_ADMIN);/return true;/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
-    sed -i 's/isProjectRoleEditorLicensed() {/isProjectRoleEditorLicensed() { return true; \/\/ /g' /usr/local/lib/node_modules/n8n/dist/license.js && \
-    sed -i 's/return this\.isLicensed(constants_1\.LICENSE_FEATURES\.PROJECT_ROLE_EDITOR);/return true;/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
-    sed -i 's/isProjectRoleViewerLicensed() {/isProjectRoleViewerLicensed() { return true; \/\/ /g' /usr/local/lib/node_modules/n8n/dist/license.js && \
-    sed -i 's/return this\.isLicensed(constants_1\.LICENSE_FEATURES\.PROJECT_ROLE_VIEWER);/return true;/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
-    sed -i 's/isInsightsViewSummaryLicensed() {/isInsightsViewSummaryLicensed() { return true; \/\/ /g' /usr/local/lib/node_modules/n8n/dist/license.js && \
-    sed -i 's/return this\.isLicensed(constants_1\.LICENSE_FEATURES\.INSIGHTS_VIEW_SUMMARY);/return true;/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
-    sed -i 's/isInsightsViewDashboardLicensed() {/isInsightsViewDashboardLicensed() { return true; \/\/ /g' /usr/local/lib/node_modules/n8n/dist/license.js && \
-    sed -i 's/return this\.isLicensed(constants_1\.LICENSE_FEATURES\.INSIGHTS_VIEW_DASHBOARD);/return true;/g' /usr/local/lib/node_modules/n8n/dist/license.js && \
-    sed -i 's/isInsightsViewHourlyDataLicensed() {/isInsightsViewHourlyDataLicensed() { return true; \/\/ /g' /usr/local/lib/node_modules/n8n/dist/license.js && \
-    sed -i 's/return this\.isLicensed(constants_1\.LICENSE_FEATURES\.INSIGHTS_VIEW_HOURLY_DATA);/return true;/g' /usr/local/lib/node_modules/n8n/dist/license.js
+# Patch isLicensed() to always return true
+RUN find /usr/local/lib/node_modules/n8n/dist -name "license.js" -type f | while read file; do \
+        sed -i 's/isLicensed(feature[^)]*)[^{]*{[^}]*return[^}]*}/isLicensed(feature) { return true; }/g' "$file"; \
+        sed -i 's/isLicensed(feature) {[^}]*this\.manager[^}]*}/isLicensed(feature) { return true; }/g' "$file"; \
+        sed -i 's/return this\.manager\?\.hasFeatureEnabled([^)]*) \?\? false;/return true;/g' "$file"; \
+        sed -i 's/return this\.manager\?\.hasFeatureEnabled([^)]*) \?\? true;/return true;/g' "$file"; \
+        sed -i 's/this\.manager\?\.hasFeatureEnabled([^)]*)/true/g' "$file"; \
+    done || true
+
+# Patch all individual license check methods in license.js to return true
+RUN find /usr/local/lib/node_modules/n8n/dist -name "license.js" -type f | while read file; do \
+        sed -i 's/return this\.isLicensed([^)]*);/return true;/g' "$file"; \
+        sed -i 's/isLicensed([^)]*) {[^}]*return[^}]*}/isLicensed(feature) { return true; }/g' "$file"; \
+    done || true
+
+# CRITICAL: Patch LicenseState.isLicensed() to always return true (this is called by many features)
+RUN find /usr/local/lib/node_modules/n8n/dist -name "*license-state*" -type f | while read file; do \
+        sed -i 's/return this\.licenseProvider\.isLicensed([^)]*);/return true;/g' "$file"; \
+        sed -i 's/this\.licenseProvider\.isLicensed([^)]*)/true/g' "$file"; \
+    done || true
+
+# CRITICAL: Patch controller registry license middleware to always allow
+RUN find /usr/local/lib/node_modules/n8n/dist -name "*controller.registry*" -type f | while read file; do \
+        sed -i 's/this\.license\.isLicensed([^)]*)/true/g' "$file"; \
+        sed -i 's/if.*!.*isLicensed[^}]*res\.status(403)[^}]*}/\/\/ License check bypassed/g' "$file"; \
+    done || true
+
+# CRITICAL: Prevent FeatureNotLicensedError from being thrown - patch error class to not throw
+RUN find /usr/local/lib/node_modules/n8n/dist -name "*feature-not-licensed*" -type f | while read file; do \
+        sed -i 's/super([^)]*);/\/\/ Bypassed: always licensed/' "$file"; \
+    done || true
+
+# Patch any remaining license checks - make all .isLicensed() calls return true
+RUN find /usr/local/lib/node_modules/n8n/dist -name "*.js" -type f | xargs grep -l "isLicensed\|FeatureNotLicensedError" 2>/dev/null | while read file; do \
+        sed -i 's/if.*!.*\.isLicensed[^}]*}/\/\/ License check bypassed/g' "$file" 2>/dev/null || true; \
+        sed -i 's/throw.*FeatureNotLicensedError/console\.log("License check bypassed"); return null;/g' "$file" 2>/dev/null || true; \
+    done || true
 
 # Patch license-state.js to always return true for all license checks
 RUN find /usr/local/lib/node_modules/n8n/dist -name "*license-state*" -type f | while read file; do \
@@ -245,6 +217,9 @@ RUN find /usr/local/lib/node_modules/n8n/dist -name "*license*" -type f | while 
         sed -i 's/getConsumerId.*{.*return.*}/getConsumerId() { return "enterprise-free"; }/g' "$file"; \
     done || true
 
+# Fix Google Sheets Update Row bug - ensure row_number is preserved
+RUN find /usr/local/lib/node_modules/n8n -name "*.js" -path "*/nodes/GoogleSheets*" -exec sed -i "s/delete inputItem\.row_number/\/\/ delete inputItem\.row_number \/\/ Fixed: preserve row_number for Update Row functionality/g" {} \; || true
+
 # Set environment variables to disable license checks
 ENV N8N_LICENSE_SERVER_URL=""
 ENV N8N_LICENSE_SERVER_URL_TRIAL=""
@@ -258,13 +233,10 @@ ENV N8N_SOURCE_CONTROL_CONNECTED="false"
 # Fix Express trust proxy configuration for Render deployment
 ENV N8N_TRUST_PROXY="true"
 
-# v1.117.0: Task runner issues are fixed, but disable to reduce resource usage on free tier
-ENV N8N_RUNNERS_ENABLED="false"
-ENV N8N_RUNNERS_MODE="disabled"
-# If you want to enable task runners on v1.117.0, set these:
-# ENV N8N_RUNNERS_ENABLED="true"
-# ENV N8N_RUNNERS_MODE="internal"
-# ENV N8N_RUNNERS_BROKER_PORT="5679"
+# v1.120.0: Task runners are required for proper workflow execution
+ENV N8N_RUNNERS_ENABLED="true"
+ENV N8N_RUNNERS_MODE="internal"
+ENV N8N_RUNNERS_BROKER_PORT="5679"
 
 # Fix deprecation warnings and SQLite warnings
 ENV NODE_NO_WARNINGS="1"
