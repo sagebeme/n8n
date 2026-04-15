@@ -36,7 +36,8 @@ const useWorkflowTimezone: INodeProperties = {
 const descriptionV2: INodeTypeDescription = {
 	displayName: 'n8n Form Trigger',
 	name: 'formTrigger',
-	icon: 'file:form.svg',
+	icon: 'node:form-trigger',
+	iconColor: 'teal',
 	group: ['trigger'],
 	// since trigger and node are sharing descriptions and logic we need to sync the versions
 	// and keep them aligned in both nodes
@@ -44,6 +45,14 @@ const descriptionV2: INodeTypeDescription = {
 	description: 'Generate webforms in n8n and pass their responses to the workflow',
 	defaults: {
 		name: 'On form submission',
+	},
+	builderHint: {
+		relatedNodes: [
+			{
+				nodeType: 'n8n-nodes-base.form',
+				relationHint: 'Add pages and final page to the form',
+			},
+		],
 	},
 
 	inputs: [],

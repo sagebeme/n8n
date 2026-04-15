@@ -1,44 +1,28 @@
-# n8n Enterprise Patch .gitignore
-
 # Environment files (contains sensitive data)
 .env
 .env.local
 .env.production
 .env.staging
 
-# Database dumps (may contain sensitive data)
-*.sql
-*.dump
-postgres-dump/*.sql
-postgres-dump/*.dump
-postgres-dump/*.txt
+# IDE files
+.vscode/*
+!.claude
+!.vscode/extensions.json
+!.vscode/settings.default.json
+.idea
 
-# Original scripts with real credentials (keep example versions)
-postgres-dump/dump-database-docker.sh
-postgres-dump/restore-to-supabase.sh
-postgres-dump/dump-database.sh
-postgres-dump/dump-database-compatible.sh
+# Tooling caches / build metadata
+nodelinter.config.json
+**/package-lock.json
+!.github/scripts/package-lock.json
+packages/**/.turbo
+.turbo
+*.tsbuildinfo
+.stylelintcache
 
-# Docker volumes
+# Docker volumes / runtime data
 docker-data/
 n8n-data/
-
-# Logs
-*.log
-logs/
-
-# OS generated files
-.DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
-Thumbs.db
-
-# IDE files
-.vscode/
-.idea/
 *.swp
 *.swo
 *~
@@ -85,9 +69,6 @@ jspm_packages/
 # Optional REPL history
 .node_repl_history
 
-# Output of 'npm pack'
-*.tgz
-
 # Yarn Integrity file
 .yarn-integrity
 
@@ -116,7 +97,7 @@ jspm_packages/
 # DynamoDB Local files
 .dynamodb/
 
-# postgres dump
+# postgres dump (may contain sensitive data)
 postgres-dump/
 
 # Additional upstream ignores
@@ -131,12 +112,15 @@ test-results.json
 packages/testing/playwright/playwright-report
 packages/testing/playwright/test-results
 packages/testing/playwright/.playwright-browsers
+packages/testing/playwright/.playwright-cli
 test-results/
 compiled_app_output
 trivy_report*
 compiled
+docker-build-manifest.json
 packages/cli/src/modules/my-feature
 .secrets
+act-event.json
 packages/testing/**/.cursor/rules/
 .venv
 .ruff_cache
@@ -144,8 +128,16 @@ __pycache__
 packages/cli/THIRD_PARTY_LICENSES.md
 .coverage
 .nyc_output
+coverage-gaps.json
 packages/cli/src/commands/export/outputs
 *.bak
 .data
 .data/
 .claude/settings.local.json
+.claude/plans/
+.cursor/plans/
+.superset
+.conductor
+.n8n
+lefthook-local.yml
+.playwright-mcp

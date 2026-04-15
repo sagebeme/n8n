@@ -44,6 +44,14 @@ export class ModuleRegistry {
 		'sso-saml',
 		'log-streaming',
 		'ldap',
+		'quick-connect',
+		'workflow-builder',
+		'favorites',
+		'redaction',
+		'instance-registry',
+		'otel',
+		'token-exchange',
+		'instance-version-history',
 	];
 
 	private readonly activeModules: string[] = [];
