@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
 import {
-	N8nActionBox,
+	N8nEmptyState,
 	N8nButton,
 	N8nDataTableServer,
 	N8nHeading,
@@ -10,20 +10,20 @@ import {
 	N8nTooltip,
 	N8nActionPill,
 } from '@n8n/design-system';
-import type { TableHeader } from '@n8n/design-system/components/N8nDataTableServer';
+import type { TableHeader } from '@n8n/design-system';
 import type { AiGatewayUsageEntry } from '@n8n/api-types';
 import { useI18n } from '@n8n/i18n';
+import { useRouter } from 'vue-router';
 import { useDocumentTitle } from '@/app/composables/useDocumentTitle';
-import { useTelemetry } from '@/app/composables/useTelemetry';
 import { useAiGatewayStore } from '@/app/stores/aiGateway.store';
-import { useUIStore } from '@/app/stores/ui.store';
-import { AI_GATEWAY_TOP_UP_MODAL_KEY } from '@/app/constants';
+import { useAiGatewayTopUp } from '@/app/composables/useAiGatewayTopUp';
+import { VIEWS } from '@/app/constants';
 
 const i18n = useI18n();
+const router = useRouter();
 const documentTitle = useDocumentTitle();
-const telemetry = useTelemetry();
 const aiGatewayStore = useAiGatewayStore();
-const uiStore = useUIStore();
+const { openTopUp } = useAiGatewayTopUp();
 
 const isLoading = ref(false);
 const isAppending = ref(false);
@@ -60,7 +60,7 @@ const tableHeaders = ref<Array<TableHeader<AiGatewayUsageEntry>>>([
 		resize: false,
 	},
 	{
-		title: i18n.baseText('settings.n8nConnect.usage.col.model'),
+		title: i18n.baseText('settings.n8nConnect.usage.col.resource'),
 		key: 'model',
 		width: 220,
 		disableSort: true,
@@ -107,6 +107,29 @@ function rowId(row: AiGatewayUsageEntry, index: number): string {
 	return `${row.timestamp}-${row.model}-${row.provider}-${index}`;
 }
 
+function rowExecutionId(row: AiGatewayUsageEntry): string | undefined {
+	return row.metadata?.executionId;
+}
+
+function rowWorkflowId(row: AiGatewayUsageEntry): string | undefined {
+	return row.metadata?.workflowId;
+}
+
+function isRowClickable(row: AiGatewayUsageEntry): boolean {
+	return Boolean(rowExecutionId(row) && rowWorkflowId(row));
+}
+
+function onRowClick(row: AiGatewayUsageEntry): void {
+	const executionId = rowExecutionId(row);
+	const workflowId = rowWorkflowId(row);
+	if (executionId && workflowId) {
+		void router.push({
+			name: VIEWS.EXECUTION_PREVIEW,
+			params: { workflowId, executionId },
+		});
+	}
+}
+
 async function load(): Promise<void> {
 	isAppending.value = false;
 	offset.value = 0;
@@ -119,7 +142,7 @@ async function load(): Promise<void> {
 }
 
 async function refresh(): Promise<void> {
-	await load();
+	await Promise.all([aiGatewayStore.fetchWallet(), load()]);
 }
 
 async function loadMore(): Promise<void> {
@@ -137,7 +160,7 @@ async function loadMore(): Promise<void> {
 
 onMounted(async () => {
 	documentTitle.set(i18n.baseText('settings.n8nConnect.title'));
-	await Promise.all([aiGatewayStore.fetchWallet(), load()]);
+	await refresh();
 });
 </script>
 
@@ -163,10 +186,7 @@ onMounted(async () => {
 				icon="hand-coins"
 				variant="solid"
 				data-test-id="ai-gateway-topup-button"
-				@click="
-					telemetry.track('User clicked ai gateway top up', { source: 'settings_page' });
-					uiStore.openModalWithData({ name: AI_GATEWAY_TOP_UP_MODAL_KEY, data: {} });
-				"
+				@click="openTopUp({ source: 'settings_page' })"
 			/>
 		</header>
 
@@ -194,7 +214,7 @@ onMounted(async () => {
 						</N8nTooltip>
 					</div>
 				</div>
-				<N8nActionBox
+				<N8nEmptyState
 					v-if="entries.length === 0"
 					:heading="i18n.baseText('settings.n8nConnect.usage.empty')"
 				/>
@@ -206,9 +226,17 @@ onMounted(async () => {
 					:items-length="entries.length"
 					:loading="isLoading && isAppending"
 					:item-value="rowId"
+					:row-props="(row) => (isRowClickable(row) ? { class: $style.clickableRow } : {})"
+					@click:row="(_, { item }) => onRowClick(item)"
 				>
 					<template #[`item.timestamp`]="{ item }">
-						{{ formatDate(item.timestamp) }}
+						<N8nTooltip
+							v-if="isRowClickable(item)"
+							:content="i18n.baseText('settings.n8nConnect.usage.openExecution')"
+						>
+							<span>{{ formatDate(item.timestamp) }}</span>
+						</N8nTooltip>
+						<span v-else>{{ formatDate(item.timestamp) }}</span>
 					</template>
 					<template #[`item.provider`]="{ item }">
 						<span :class="$style.providerBadge">
@@ -232,7 +260,6 @@ onMounted(async () => {
 				<div v-if="hasMore && entries.length > 0" :class="$style.loadMore">
 					<N8nButton
 						:label="i18n.baseText('settings.n8nConnect.usage.loadMore')"
-						type="secondary"
 						:loading="isLoading && isAppending"
 						@click="loadMore"
 					/>
@@ -299,6 +326,14 @@ onMounted(async () => {
 .gatewayUsageTable {
 	tr:last-child {
 		border-bottom: none !important;
+	}
+}
+
+.clickableRow {
+	cursor: pointer;
+
+	&:hover td {
+		background-color: var(--color--background--light-2);
 	}
 }
 

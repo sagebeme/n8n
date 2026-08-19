@@ -1,12 +1,61 @@
 import type { InstanceRegistration } from '@n8n/api-types';
 import type { Logger } from '@n8n/backend-common';
 import type { ExecutionsConfig } from '@n8n/config';
+import { Container } from '@n8n/di';
 import type { InstanceSettings } from 'n8n-core';
-import { mock } from 'jest-mock-extended';
+import { mock } from 'vitest-mock-extended';
 
 import { InstanceRegistryService } from '../instance-registry.service';
-import type { MemoryInstanceStorage } from '../storage/memory-storage';
 import { REGISTRY_CONSTANTS } from '../instance-registry.types';
+import type { InstanceStorage } from '../storage/instance-storage.interface';
+import type { MemoryInstanceStorage } from '../storage/memory-storage';
+import { RedisInstanceStorage } from '../storage/redis-instance-storage';
+
+vi.mock('../storage/redis-instance-storage', () => {
+	class MockRedisStorage implements InstanceStorage {
+		readonly kind = 'redis' as const;
+
+		private registrations = new Map<string, InstanceRegistration>();
+
+		// Match the real class's constructor shape so callers can instantiate
+		// without type juggling. Arguments are unused in the mock.
+		constructor(..._args: unknown[]) {}
+
+		async register(registration: InstanceRegistration) {
+			this.registrations.set(registration.instanceKey, registration);
+		}
+
+		async heartbeat(registration: InstanceRegistration) {
+			this.registrations.set(registration.instanceKey, registration);
+		}
+
+		async unregister(instanceKey: string) {
+			this.registrations.delete(instanceKey);
+		}
+
+		async getAllRegistrations() {
+			return [...this.registrations.values()];
+		}
+
+		async getRegistration(instanceKey: string) {
+			return this.registrations.get(instanceKey) ?? null;
+		}
+
+		async getLastKnownState() {
+			return new Map<string, InstanceRegistration>();
+		}
+
+		async saveLastKnownState() {}
+
+		async cleanupStaleMembers() {
+			return 0;
+		}
+
+		async destroy() {}
+	}
+
+	return { RedisInstanceStorage: MockRedisStorage };
+});
 
 const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
 
@@ -33,7 +82,7 @@ describe('InstanceRegistryService', () => {
 	let logger: ReturnType<typeof makeLogger>;
 
 	beforeEach(() => {
-		jest.useFakeTimers();
+		vi.useFakeTimers();
 		logger = makeLogger();
 	});
 
@@ -42,8 +91,9 @@ describe('InstanceRegistryService', () => {
 		try {
 			await service?.shutdown();
 		} catch {}
-		jest.useRealTimers();
-		jest.restoreAllMocks();
+		Container.reset();
+		vi.useRealTimers();
+		vi.restoreAllMocks();
 	});
 
 	const createService = (
@@ -71,6 +121,42 @@ describe('InstanceRegistryService', () => {
 			await service.init();
 
 			expect(service.storageBackend).toBe('memory');
+		});
+
+		describe('redis selection', () => {
+			const bindRedisStub = () => {
+				// The vi.mock above replaces RedisInstanceStorage with a stub
+				// class whose constructor accepts any args.
+				const MockCtor = RedisInstanceStorage as unknown as new () => RedisInstanceStorage;
+				Container.set(RedisInstanceStorage, new MockCtor());
+			};
+
+			it('should select redis storage when isMultiMain', async () => {
+				bindRedisStub();
+				service = createService({ isMultiMain: true }, 'regular');
+
+				await service.init();
+
+				expect(service.storageBackend).toBe('redis');
+			});
+
+			it('should select redis storage in queue mode even when not multi-main', async () => {
+				bindRedisStub();
+				service = createService({ isMultiMain: false }, 'queue');
+
+				await service.init();
+
+				expect(service.storageBackend).toBe('redis');
+			});
+
+			it('should select redis storage when multi-main and queue mode', async () => {
+				bindRedisStub();
+				service = createService({ isMultiMain: true }, 'queue');
+
+				await service.init();
+
+				expect(service.storageBackend).toBe('redis');
+			});
 		});
 	});
 
@@ -151,7 +237,7 @@ describe('InstanceRegistryService', () => {
 			const lastSeenBefore = regBefore[0].lastSeen;
 
 			// Advance past heartbeat interval
-			await jest.advanceTimersByTimeAsync(REGISTRY_CONSTANTS.HEARTBEAT_INTERVAL_MS);
+			await vi.advanceTimersByTimeAsync(REGISTRY_CONSTANTS.HEARTBEAT_INTERVAL_MS);
 
 			const regAfter = await service.getAllInstances();
 			expect(regAfter[0].lastSeen).toBeGreaterThanOrEqual(lastSeenBefore);
@@ -164,7 +250,7 @@ describe('InstanceRegistryService', () => {
 			const regBefore = await service.getAllInstances();
 			const registeredAt = regBefore[0].registeredAt;
 
-			await jest.advanceTimersByTimeAsync(REGISTRY_CONSTANTS.HEARTBEAT_INTERVAL_MS);
+			await vi.advanceTimersByTimeAsync(REGISTRY_CONSTANTS.HEARTBEAT_INTERVAL_MS);
 
 			const regAfter = await service.getAllInstances();
 			expect(regAfter[0].registeredAt).toBe(registeredAt);
@@ -177,17 +263,17 @@ describe('InstanceRegistryService', () => {
 			// Access the storage via getAllInstances to get a reference for spying
 			// We need to spy on the storage's heartbeat method
 			const storage = (service as unknown as { storage: MemoryInstanceStorage }).storage;
-			const heartbeatSpy = jest
+			const heartbeatSpy = vi
 				.spyOn(storage, 'heartbeat')
 				.mockRejectedValueOnce(new Error('Redis down'));
 
-			await jest.advanceTimersByTimeAsync(REGISTRY_CONSTANTS.HEARTBEAT_INTERVAL_MS);
+			await vi.advanceTimersByTimeAsync(REGISTRY_CONSTANTS.HEARTBEAT_INTERVAL_MS);
 
 			expect(logger.warn).toHaveBeenCalledWith('Heartbeat failed', expect.any(Object));
 
 			// Restore and verify heartbeat continues
 			heartbeatSpy.mockRestore();
-			await jest.advanceTimersByTimeAsync(REGISTRY_CONSTANTS.HEARTBEAT_INTERVAL_MS);
+			await vi.advanceTimersByTimeAsync(REGISTRY_CONSTANTS.HEARTBEAT_INTERVAL_MS);
 
 			const regs = await service.getAllInstances();
 			expect(regs).toHaveLength(1);
@@ -204,7 +290,7 @@ describe('InstanceRegistryService', () => {
 				writable: true,
 			});
 
-			await jest.advanceTimersByTimeAsync(REGISTRY_CONSTANTS.HEARTBEAT_INTERVAL_MS);
+			await vi.advanceTimersByTimeAsync(REGISTRY_CONSTANTS.HEARTBEAT_INTERVAL_MS);
 
 			const local = service.getLocalInstance();
 			expect(local.instanceRole).toBe('leader');
@@ -220,8 +306,8 @@ describe('InstanceRegistryService', () => {
 
 			await service.shutdown();
 
-			const heartbeatSpy = jest.spyOn(storage, 'heartbeat');
-			await jest.advanceTimersByTimeAsync(REGISTRY_CONSTANTS.HEARTBEAT_INTERVAL_MS * 3);
+			const heartbeatSpy = vi.spyOn(storage, 'heartbeat');
+			await vi.advanceTimersByTimeAsync(REGISTRY_CONSTANTS.HEARTBEAT_INTERVAL_MS * 3);
 
 			expect(heartbeatSpy).not.toHaveBeenCalled();
 			heartbeatSpy.mockRestore();
@@ -244,7 +330,7 @@ describe('InstanceRegistryService', () => {
 			await service.init();
 
 			const storage = (service as unknown as { storage: MemoryInstanceStorage }).storage;
-			const destroySpy = jest.spyOn(storage, 'destroy');
+			const destroySpy = vi.spyOn(storage, 'destroy');
 
 			await service.shutdown();
 
@@ -257,7 +343,7 @@ describe('InstanceRegistryService', () => {
 			await service.init();
 
 			const storage = (service as unknown as { storage: MemoryInstanceStorage }).storage;
-			jest.spyOn(storage, 'unregister').mockRejectedValueOnce(new Error('fail'));
+			vi.spyOn(storage, 'unregister').mockRejectedValueOnce(new Error('fail'));
 
 			await expect(service.shutdown()).resolves.toBeUndefined();
 			expect(logger.warn).toHaveBeenCalledWith(

@@ -1,33 +1,36 @@
+import { type ProvisioningConfigDto } from '@n8n/api-types';
 import type { LicenseState } from '@n8n/backend-common';
-import { mock } from 'jest-mock-extended';
+import type { InstanceSettingsLoaderConfig } from '@n8n/config';
+import { type AuthenticatedRequest } from '@n8n/db';
+import { type Response } from 'express';
+import { mock } from 'vitest-mock-extended';
+
+import { type ProvisioningService } from '@/modules/provisioning.ee/provisioning.service.ee';
 
 import { ProvisioningController } from '../provisioning.controller.ee';
-import { type ProvisioningService } from '@/modules/provisioning.ee/provisioning.service.ee';
-import type { OidcInstanceSettingsLoader } from '@/instance-settings-loader/loaders/oidc.instance-settings-loader';
-import { type Response } from 'express';
-import { type AuthenticatedRequest } from '@n8n/db';
-import { type ProvisioningConfigDto } from '@n8n/api-types';
 
 const provisioningService = mock<ProvisioningService>();
 const licenseState = mock<LicenseState>();
-const oidcSettingsLoader = mock<OidcInstanceSettingsLoader>();
+const instanceSettingsLoaderConfig = mock<InstanceSettingsLoaderConfig>({
+	ssoManagedByEnv: false,
+});
 
 const controller = new ProvisioningController(
 	provisioningService,
 	licenseState,
-	oidcSettingsLoader,
+	instanceSettingsLoaderConfig,
 );
 
 describe('ProvisioningController', () => {
 	beforeEach(() => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	});
 
 	describe('getConfig', () => {
 		const req = mock<AuthenticatedRequest>();
 		const res = mock<Response>({
-			json: jest.fn().mockReturnThis(),
-			status: jest.fn().mockReturnThis(),
+			json: vi.fn().mockReturnThis(),
+			status: vi.fn().mockReturnThis(),
 		});
 
 		it('should return 403 if provisioning is not licensed', async () => {
@@ -59,8 +62,8 @@ describe('ProvisioningController', () => {
 	describe('patchConfig', () => {
 		const req = mock<AuthenticatedRequest>();
 		const res = mock<Response>({
-			json: jest.fn().mockReturnThis(),
-			status: jest.fn().mockReturnThis(),
+			json: vi.fn().mockReturnThis(),
+			status: vi.fn().mockReturnThis(),
 		});
 
 		it('should return 403 if provisioning is not licensed', async () => {
@@ -68,6 +71,21 @@ describe('ProvisioningController', () => {
 			await controller.patchConfig(req, res);
 
 			expect(res.status).toHaveBeenCalledWith(403);
+		});
+
+		it('should reject writes when managed by env', async () => {
+			const envManagedConfig = mock<InstanceSettingsLoaderConfig>({ ssoManagedByEnv: true });
+			const envManagedController = new ProvisioningController(
+				provisioningService,
+				licenseState,
+				envManagedConfig,
+			);
+
+			licenseState.isProvisioningLicensed.mockReturnValue(true);
+
+			await expect(envManagedController.patchConfig(req, res)).rejects.toThrow(
+				'cannot be modified through the API',
+			);
 		});
 
 		it('should patch the provisioning config', async () => {

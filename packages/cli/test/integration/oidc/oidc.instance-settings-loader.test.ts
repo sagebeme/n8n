@@ -3,10 +3,11 @@ import { GlobalConfig } from '@n8n/config';
 import { SettingsRepository } from '@n8n/db';
 import { Container } from '@n8n/di';
 
-import { OidcInstanceSettingsLoader } from '@/instance-settings-loader/loaders/oidc.instance-settings-loader';
+import { SsoInstanceSettingsLoader } from '@/instance-settings-loader/loaders/sso/sso.instance-settings-loader';
 import { PROVISIONING_PREFERENCES_DB_KEY } from '@/modules/provisioning.ee/constants';
 import { OIDC_PREFERENCES_DB_KEY } from '@/modules/sso-oidc/constants';
 import { OidcService } from '@/modules/sso-oidc/oidc.service.ee';
+import { SAML_PREFERENCES_DB_KEY } from '@/modules/sso-saml/constants';
 
 beforeAll(async () => {
 	await testDb.init();
@@ -16,7 +17,7 @@ afterAll(async () => {
 	await testDb.terminate();
 });
 
-describe('OidcInstanceSettingsLoader → OidcService roundtrip', () => {
+describe('SsoInstanceSettingsLoader → OIDC', () => {
 	let originalConfig: Record<string, unknown>;
 
 	beforeEach(() => {
@@ -33,6 +34,7 @@ describe('OidcInstanceSettingsLoader → OidcService roundtrip', () => {
 		// Clean up DB rows
 		const settingsRepository = Container.get(SettingsRepository);
 		await settingsRepository.delete({ key: OIDC_PREFERENCES_DB_KEY });
+		await settingsRepository.delete({ key: SAML_PREFERENCES_DB_KEY });
 		await settingsRepository.delete({ key: PROVISIONING_PREFERENCES_DB_KEY });
 	});
 
@@ -46,10 +48,12 @@ describe('OidcInstanceSettingsLoader → OidcService roundtrip', () => {
 			oidcLoginEnabled: true,
 			oidcPrompt: 'consent',
 			oidcAcrValues: 'mfa, phrh',
+			oidcAdditionalScopes: 'offline_access',
+			oidcRpInitiatedLogoutEnabled: true,
 			ssoUserRoleProvisioning: 'instance_and_project_roles',
 		});
 
-		const loader = Container.get(OidcInstanceSettingsLoader);
+		const loader = Container.get(SsoInstanceSettingsLoader);
 		await loader.run();
 
 		const oidcService = Container.get(OidcService);
@@ -63,5 +67,7 @@ describe('OidcInstanceSettingsLoader → OidcService roundtrip', () => {
 		expect(config.loginEnabled).toBe(true);
 		expect(config.prompt).toBe('consent');
 		expect(config.authenticationContextClassReference).toEqual(['mfa', 'phrh']);
+		expect(config.additionalScopes).toBe('offline_access');
+		expect(config.rpInitiatedLogoutEnabled).toBe(true);
 	});
 });

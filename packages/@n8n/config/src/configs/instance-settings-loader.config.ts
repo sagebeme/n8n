@@ -59,6 +59,13 @@ export class InstanceSettingsLoaderConfig {
 	@Env('N8N_SSO_OIDC_ACR_VALUES')
 	oidcAcrValues: string = '';
 
+	/** Space-separated additional scopes appended to the OIDC authorization request. */
+	@Env('N8N_SSO_OIDC_ADDITIONAL_SCOPES')
+	oidcAdditionalScopes: string = '';
+
+	@Env('N8N_SSO_OIDC_RP_INITIATED_LOGOUT_ENABLED')
+	oidcRpInitiatedLogoutEnabled: boolean = false;
+
 	/**
 	 * When true, security policy settings are managed via environment variables.
 	 * On every startup the security policy will be overridden by env vars.
@@ -75,4 +82,73 @@ export class InstanceSettingsLoaderConfig {
 
 	@Env('N8N_PERSONAL_SPACE_SHARING_ENABLED')
 	personalSpaceSharingEnabled: boolean = true;
+
+	// --- SAML ---
+
+	/** XML metadata string from the identity provider. */
+	@Env('N8N_SSO_SAML_METADATA')
+	samlMetadata: string = '';
+
+	/** URL to fetch SAML metadata from (mutually exclusive with metadata). */
+	@Env('N8N_SSO_SAML_METADATA_URL')
+	samlMetadataUrl: string = '';
+
+	@Env('N8N_SSO_SAML_LOGIN_ENABLED')
+	samlLoginEnabled: boolean = false;
+
+	// --- Log streaming ---
+
+	/**
+	 * When true, log streaming destinations are reconciled from env vars on every
+	 * startup
+	 */
+	@Env('N8N_LOG_STREAMING_MANAGED_BY_ENV')
+	logStreamingManagedByEnv: boolean = false;
+
+	/**
+	 * JSON-encoded array of log streaming destinations.
+	 *
+	 * @example
+	 * ```json
+	 * [
+	 *   { "type": "webhook", "label": "Audit", "url": "https://hooks.example.com/audit" },
+	 *   { "type": "syslog", "label": "SIEM", "host": "syslog.example.com" },
+	 *   { "type": "sentry", "label": "Ops", "dsn": "https://public@sentry.example.com/1" }
+	 * ]
+	 * ```
+	 */
+	@Env('N8N_LOG_STREAMING_DESTINATIONS')
+	logStreamingDestinations: string = '';
+
+	// --- MCP ---
+	@Env('N8N_MCP_MANAGED_BY_ENV')
+	mcpManagedByEnv: boolean = false;
+
+	@Env('N8N_MCP_ACCESS_ENABLED')
+	mcpAccessEnabled: boolean = false;
+
+	// --- Community packages ---
+
+	/**
+	 * When true, the set of installed community packages is reconciled from env
+	 * vars on every startup: missing packages are installed, version mismatches
+	 * are corrected, and packages not in the list are uninstalled. The
+	 * community-packages UI is locked while this mode is on.
+	 */
+	@Env('N8N_COMMUNITY_PACKAGES_MANAGED_BY_ENV')
+	communityPackagesManagedByEnv: boolean = false;
+
+	/**
+	 * JSON-encoded array of community packages to reconcile on boot.
+	 *
+	 * @example
+	 * ```json
+	 * [
+	 *   { "name": "n8n-nodes-foo", "version": "1.2.3" },
+	 *   { "name": "n8n-nodes-bar", "version": "0.5.0", "checksum": "sha512-..." }
+	 * ]
+	 * ```
+	 */
+	@Env('N8N_COMMUNITY_PACKAGES')
+	communityPackages: string = '';
 }

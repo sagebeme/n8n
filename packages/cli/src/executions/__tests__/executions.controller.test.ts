@@ -1,29 +1,27 @@
-import type { ExecutionSummaries } from '@n8n/db';
-import { mock } from 'jest-mock-extended';
+import { DeleteExecutionsDto } from '@n8n/api-types';
+import type { AuthenticatedRequest, ExecutionSummaries, User } from '@n8n/db';
+import { mock } from 'vitest-mock-extended';
 
 import { BadRequestError } from '@/errors/response-errors/bad-request.error';
 import { NotFoundError } from '@/errors/response-errors/not-found.error';
 import type { ExecutionService } from '@/executions/execution.service';
 import type { ExecutionRequest } from '@/executions/execution.types';
 import { ExecutionsController } from '@/executions/executions.controller';
-import type { RoleService } from '@/services/role.service';
 import type { WorkflowSharingService } from '@/workflows/workflow-sharing.service';
 
 describe('ExecutionsController', () => {
 	const executionService = mock<ExecutionService>();
 	const workflowSharingService = mock<WorkflowSharingService>();
-	const roleService = mock<RoleService>();
 
 	const executionsController = new ExecutionsController(
 		executionService,
 		mock(),
 		workflowSharingService,
 		mock(),
-		roleService,
 	);
 
 	beforeEach(() => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	});
 
 	describe('getOne', () => {
@@ -31,6 +29,28 @@ describe('ExecutionsController', () => {
 			const req = mock<ExecutionRequest.GetOne>({ params: { id: 'test' } });
 
 			await expect(executionsController.getOne(req)).rejects.toThrow(BadRequestError);
+		});
+	});
+
+	describe('delete', () => {
+		it('should 404 when no workflows are accessible', async () => {
+			workflowSharingService.getSharedWorkflowIds.mockResolvedValue([]);
+
+			await expect(
+				executionsController.delete(mock(), mock(), DeleteExecutionsDto.parse({ ids: ['1'] })),
+			).rejects.toThrow(NotFoundError);
+
+			expect(executionService.delete).not.toHaveBeenCalled();
+		});
+
+		it('should pass the user, payload and accessible workflow ids to the service', async () => {
+			workflowSharingService.getSharedWorkflowIds.mockResolvedValue(['wf-1']);
+			const user = mock<User>({ id: 'user-1' });
+			const payload = DeleteExecutionsDto.parse({ deleteBefore: '2026-01-01T00:00:00.000Z' });
+
+			await executionsController.delete(mock<AuthenticatedRequest>({ user }), mock(), payload);
+
+			expect(executionService.delete).toHaveBeenCalledWith(user, payload, ['wf-1']);
 		});
 	});
 
@@ -90,7 +110,10 @@ describe('ExecutionsController', () => {
 			test.each(QUERIES_WITH_EITHER_STATUS_OR_RANGE)(
 				'should fetch executions per query',
 				async (rangeQuery) => {
-					roleService.rolesWithScope.mockResolvedValue([]);
+					executionService.buildSharingOptions.mockResolvedValue({
+						workflowRoles: [],
+						projectRoles: [],
+					});
 					executionService.findLatestCurrentAndCompleted.mockResolvedValue(NO_EXECUTIONS);
 
 					const req = mock<ExecutionRequest.GetMany>({ rangeQuery });
@@ -108,7 +131,10 @@ describe('ExecutionsController', () => {
 			test.each(QUERIES_NEITHER_STATUS_NOR_RANGE_PROVIDED)(
 				'should fetch executions per query',
 				async (rangeQuery) => {
-					roleService.rolesWithScope.mockResolvedValue([]);
+					executionService.buildSharingOptions.mockResolvedValue({
+						workflowRoles: [],
+						projectRoles: [],
+					});
 					executionService.findLatestCurrentAndCompleted.mockResolvedValue(NO_EXECUTIONS);
 
 					const req = mock<ExecutionRequest.GetMany>({ rangeQuery });
@@ -124,7 +150,10 @@ describe('ExecutionsController', () => {
 
 		describe('if both status and range provided', () => {
 			it('should fetch executions per query', async () => {
-				roleService.rolesWithScope.mockResolvedValue([]);
+				executionService.buildSharingOptions.mockResolvedValue({
+					workflowRoles: [],
+					projectRoles: [],
+				});
 				executionService.findLatestCurrentAndCompleted.mockResolvedValue(NO_EXECUTIONS);
 
 				const rangeQuery: ExecutionSummaries.RangeQuery = {

@@ -4,9 +4,11 @@ import { STORES } from '@n8n/stores';
 import { useRootStore } from '@n8n/stores/useRootStore';
 import * as favoritesApi from '@/app/api/favorites';
 import type { FavoriteResourceType, UserFavorite } from '@/app/api/favorites';
+import { useTelemetry } from '@n8n/composables/useTelemetry';
 
 export const useFavoritesStore = defineStore(STORES.FAVORITES, () => {
 	const rootStore = useRootStore();
+	const telemetry = useTelemetry();
 
 	const favorites = ref<UserFavorite[]>([]);
 	const initialized = ref(false);
@@ -25,6 +27,10 @@ export const useFavoritesStore = defineStore(STORES.FAVORITES, () => {
 
 	const folderFavoriteIds = computed(() =>
 		favorites.value.filter((f) => f.resourceType === 'folder').map((f) => f.resourceId),
+	);
+
+	const agentFavoriteIds = computed(() =>
+		favorites.value.filter((f) => f.resourceType === 'agent').map((f) => f.resourceId),
 	);
 
 	async function fetchFavorites() {
@@ -62,10 +68,18 @@ export const useFavoritesStore = defineStore(STORES.FAVORITES, () => {
 			favorites.value = favorites.value.filter(
 				(f) => !(f.resourceId === resourceId && f.resourceType === resourceType),
 			);
+			telemetry.track('User toggled favorite', {
+				action: 'removed',
+				resource_type: resourceType,
+			});
 		} else {
 			await favoritesApi.addFavorite(rootStore.restApiContext, resourceId, resourceType);
 			// Re-fetch to get enriched metadata from the server
 			favorites.value = await favoritesApi.getFavorites(rootStore.restApiContext);
+			telemetry.track('User toggled favorite', {
+				action: 'added',
+				resource_type: resourceType,
+			});
 		}
 	}
 
@@ -86,6 +100,7 @@ export const useFavoritesStore = defineStore(STORES.FAVORITES, () => {
 		projectFavoriteIds,
 		dataTableFavoriteIds,
 		folderFavoriteIds,
+		agentFavoriteIds,
 		fetchFavorites,
 		isFavorite,
 		renameFavorite,
